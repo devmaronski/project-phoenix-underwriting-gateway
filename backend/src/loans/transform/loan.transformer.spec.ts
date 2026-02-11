@@ -52,6 +52,21 @@ describe('LoanTransformer', () => {
 
       expect(result.loan_amount_dollars).toBe(0);
     });
+
+    it('should handle very large loan amounts', () => {
+      const raw: LegacyLoan = {
+        id: 'LOAN-004',
+        borrower_name: 'Rich Person',
+        loan_amount_cents: 999999999999,
+        issued_date: '2024-03-10',
+        interest_rate_percent: 4.5,
+        term_months: 36,
+      };
+
+      const result = transformLoan(raw);
+
+      expect(result.loan_amount_dollars).toBe(9999999999.99);
+    });
   });
 
   describe('validation errors', () => {
@@ -195,6 +210,82 @@ describe('LoanTransformer', () => {
         expect(error).toBeInstanceOf(AppError);
         expect((error as AppError).code).toBe('LEGACY_DATA_CORRUPT');
         expect((error as AppError).details?.field).toBe('issued_date');
+      }
+    });
+
+    it('should reject missing id field', () => {
+      const raw = {
+        borrower_name: 'Test',
+        loan_amount_cents: 100000,
+        issued_date: '2024-01-15',
+        interest_rate_percent: 5,
+        term_months: 60,
+      } as unknown as LegacyLoan;
+
+      expect(() => transformLoan(raw)).toThrow(AppError);
+
+      try {
+        transformLoan(raw);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('LEGACY_DATA_CORRUPT');
+      }
+    });
+
+    it('should reject missing borrower_name field', () => {
+      const raw = {
+        id: 'LOAN-011',
+        loan_amount_cents: 100000,
+        issued_date: '2024-01-15',
+        interest_rate_percent: 5,
+        term_months: 60,
+      } as unknown as LegacyLoan;
+
+      expect(() => transformLoan(raw)).toThrow(AppError);
+
+      try {
+        transformLoan(raw);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('LEGACY_DATA_CORRUPT');
+      }
+    });
+
+    it('should reject missing interest_rate_percent field', () => {
+      const raw = {
+        id: 'LOAN-012',
+        borrower_name: 'Test',
+        loan_amount_cents: 100000,
+        issued_date: '2024-01-15',
+        term_months: 60,
+      } as unknown as LegacyLoan;
+
+      expect(() => transformLoan(raw)).toThrow(AppError);
+
+      try {
+        transformLoan(raw);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('LEGACY_DATA_CORRUPT');
+      }
+    });
+
+    it('should reject missing term_months field', () => {
+      const raw = {
+        id: 'LOAN-013',
+        borrower_name: 'Test',
+        loan_amount_cents: 100000,
+        issued_date: '2024-01-15',
+        interest_rate_percent: 5,
+      } as unknown as LegacyLoan;
+
+      expect(() => transformLoan(raw)).toThrow(AppError);
+
+      try {
+        transformLoan(raw);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('LEGACY_DATA_CORRUPT');
       }
     });
   });
