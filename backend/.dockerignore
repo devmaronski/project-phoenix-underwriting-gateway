@@ -12,7 +12,6 @@ jest.config.js
 tsconfig.json
     .eslintrc.cjs
     .prettierrc
-Dockerfile
     .dockerignore
 test
 tests
