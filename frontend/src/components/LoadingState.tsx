@@ -1,12 +1,8 @@
-/**
- * LoadingState: Skeleton loader while data is being fetched.
- */
-
 import { Card } from "./ui/card";
 
 export function LoadingState() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="loading-state">
       {/* Loan Summary Skeleton */}
       <Card>
         <div className="space-y-4 p-6">
