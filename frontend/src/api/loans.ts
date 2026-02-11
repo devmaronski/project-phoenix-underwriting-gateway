@@ -10,7 +10,7 @@ export const loansApi = {
    */
   async getReview(loanId: string): Promise<LoanReviewResponse> {
     const response = await apiClient.get<LoanReviewResponse>(
-      `/loans/${loanId}`
+      `/loans/${encodeURIComponent(loanId)}`
     );
     return response.data;
   }

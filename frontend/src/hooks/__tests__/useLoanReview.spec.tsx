@@ -79,12 +79,12 @@ describe('useLoanReview Hook', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBe(true);
       });
 
       expect(result.current.error).toBeDefined();
       expect(result.current.error?.code).toBe('NOT_FOUND');
-      expect(result.current.data).toBeNull();
+      expect(result.current.data).toBeUndefined();
     });
 
     it('should return FrontendError for 422 LEGACY_DATA_CORRUPT', async () => {
@@ -96,7 +96,7 @@ describe('useLoanReview Hook', () => {
       );
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBe(true);
       });
 
       expect(result.current.error?.code).toBe('LEGACY_DATA_CORRUPT');
@@ -109,7 +109,7 @@ describe('useLoanReview Hook', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBe(true);
       });
 
       expect(result.current.error?.code).toBe('AI_TIMEOUT');
@@ -122,7 +122,7 @@ describe('useLoanReview Hook', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBe(true);
       });
 
       expect(result.current.error?.requestId).toBeDefined();
@@ -134,7 +134,7 @@ describe('useLoanReview Hook', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+        expect(result.current.isError).toBe(true);
       });
 
       expect(result.current.error?.code).toBe('RISK_SERVICE_DOWN');

@@ -1,4 +1,4 @@
-import { useLoanReview } from '../hooks/useLoanReview';
+import { useLoanReview } from '@/hooks/useLoanReview';
 import { ErrorBanner } from './ErrorBanner';
 import { LoadingState } from './LoadingState';
 import { LoanSummaryCard } from './LoanSummaryCard';
