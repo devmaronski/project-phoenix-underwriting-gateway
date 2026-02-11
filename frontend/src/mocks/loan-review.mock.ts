@@ -64,18 +64,17 @@ export function createMockLoanReview(
 // ─────────────────────────────────────────────────────
 
 export function createMockErrorResponse(
-  code: ErrorCode | string = ErrorCode.NOT_FOUND,
+  code: ErrorCode | string = 'NOT_FOUND',
   message?: string
 ): ErrorResponse {
   const messages: Record<string, string> = {
-    [ErrorCode.NOT_FOUND]: 'Loan not found. Check the ID.',
-    [ErrorCode.VALIDATION_FAILED]: 'Invalid loan data provided.',
-    [ErrorCode.LEGACY_DATA_CORRUPT]:
-      'Legacy data is corrupted. Please contact support.',
-    [ErrorCode.AI_TIMEOUT]: 'Risk service unavailable. Please retry.',
-    [ErrorCode.RISK_SERVICE_DOWN]: 'Risk service is currently offline.',
-    [ErrorCode.NETWORK_ERROR]: 'Network error. Check your connection.',
-    [ErrorCode.INTERNAL_SERVER_ERROR]: 'Server error. Please try again later.'
+    NOT_FOUND: 'Loan not found. Check the ID.',
+    VALIDATION_FAILED: 'Invalid loan data provided.',
+    LEGACY_DATA_CORRUPT: 'Legacy data is corrupted. Please contact support.',
+    AI_TIMEOUT: 'Risk service unavailable. Please retry.',
+    RISK_SERVICE_DOWN: 'Risk service is currently offline.',
+    NETWORK_ERROR: 'Network error. Check your connection.',
+    INTERNAL_SERVER_ERROR: 'Server error. Please try again later.'
   };
 
   return {
@@ -86,6 +85,22 @@ export function createMockErrorResponse(
     meta: {
       requestId: crypto.randomUUID()
     }
+  };
+}
+
+/**
+ * Convert ErrorResponse to ApiError format for component tests.
+ * This mimics what the axios interceptor does in client.ts.
+ */
+export function createMockApiError(
+  code: ErrorCode | string = 'NOT_FOUND',
+  message?: string
+): import('../api/client').ApiError {
+  const errorResponse = createMockErrorResponse(code, message);
+  return {
+    code: errorResponse.error.code,
+    message: errorResponse.error.message,
+    requestId: errorResponse.meta.requestId
   };
 }
 
@@ -137,17 +152,13 @@ export const MOCK_SCENARIOS = {
       })
     }),
 
-  loanNotFound: (): ErrorResponse =>
-    createMockErrorResponse(ErrorCode.NOT_FOUND),
+  loanNotFound: (): ErrorResponse => createMockErrorResponse('NOT_FOUND'),
 
   legacyDataCorrupt: (): ErrorResponse =>
-    createMockErrorResponse(ErrorCode.LEGACY_DATA_CORRUPT),
+    createMockErrorResponse('LEGACY_DATA_CORRUPT'),
 
-  aiTimeout: (): ErrorResponse => createMockErrorResponse(ErrorCode.AI_TIMEOUT),
+  aiTimeout: (): ErrorResponse => createMockErrorResponse('AI_TIMEOUT'),
 
   networkError: (): ErrorResponse =>
-    createMockErrorResponse(
-      ErrorCode.NETWORK_ERROR,
-      'Unable to reach the server.'
-    )
+    createMockErrorResponse('NETWORK_ERROR', 'Unable to reach the server.')
 };
