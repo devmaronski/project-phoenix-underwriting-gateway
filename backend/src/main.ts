@@ -12,7 +12,11 @@ async function bootstrap() {
 
   // Enable CORS for frontend
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://project-phoenix-web-824530365813.asia-southeast1.run.app',
+    ],
     credentials: true,
   });
 
