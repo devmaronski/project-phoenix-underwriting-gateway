@@ -8,7 +8,15 @@ const jsxA11yPlugin = require('eslint-plugin-jsx-a11y');
 
 module.exports = [
   {
-    ignores: ['dist', 'node_modules', 'coverage']
+    ignores: [
+      'dist',
+      'node_modules',
+      'coverage',
+      '**/*.d.ts',
+      '**/*.js',
+      '**/*.cjs',
+      '**/*.mjs'
+    ]
   },
   js.configs.recommended,
   {
