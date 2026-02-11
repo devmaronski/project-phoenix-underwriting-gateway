@@ -1,93 +1,61 @@
-/**
- * Error handling utilities for user-friendly error messages.
- * Maps backend error codes to messages and determines retry eligibility.
- */
+import type { ApiError } from '../api/client';
+import { ErrorCode } from '../types/api.types';
 
-import { ErrorCode, ErrorResponse } from "@/types/api.types";
-
-export interface UserFriendlyError {
+interface ErrorMessage {
   title: string;
   message: string;
   canRetry: boolean;
-  requestId: string;
 }
 
-/**
- * Maps backend error codes to user-friendly messages and retry logic.
- */
-const ERROR_MESSAGES: Record<string, UserFriendlyError> = {
-  [ErrorCode.NOT_FOUND]: {
-    title: "Loan Not Found",
-    message: "The loan ID does not exist. Please check and try again.",
-    canRetry: false,
-    requestId: "",
-  },
-  [ErrorCode.VALIDATION_FAILED]: {
-    title: "Invalid Data",
-    message:
-      "The loan data is invalid. Please contact support with the request ID.",
-    canRetry: false,
-    requestId: "",
-  },
-  [ErrorCode.LEGACY_DATA_CORRUPT]: {
-    title: "Data Error",
-    message:
-      "The loan record is corrupted in our system. Please contact support.",
-    canRetry: false,
-    requestId: "",
-  },
-  [ErrorCode.AI_TIMEOUT]: {
-    title: "Service Timeout",
-    message: "The risk assessment service is taking too long. Please retry.",
-    canRetry: true,
-    requestId: "",
-  },
-  [ErrorCode.RISK_SERVICE_DOWN]: {
-    title: "Service Unavailable",
-    message: "The risk service is currently offline. Please try again later.",
-    canRetry: true,
-    requestId: "",
-  },
-  [ErrorCode.NETWORK_ERROR]: {
-    title: "Network Error",
-    message:
-      "Unable to reach the server. Check your connection and retry.",
-    canRetry: true,
-    requestId: "",
-  },
-  [ErrorCode.INTERNAL_SERVER_ERROR]: {
-    title: "Server Error",
-    message: "Something went wrong on the server. Please try again later.",
-    canRetry: true,
-    requestId: "",
-  },
-};
+export function getErrorMessage(error: ApiError): ErrorMessage {
+  switch (error.code) {
+    case ErrorCode.NOT_FOUND:
+      return {
+        title: 'Loan Not Found',
+        message: 'The requested loan could not be found. Please check the loan ID and try again.',
+        canRetry: false,
+      };
 
-/**
- * Converts backend error response to user-friendly error object.
- *
- * @param error - Backend error response
- * @returns User-friendly error with message, retry capability, and requestId
- */
-export function getUserFriendlyError(error: ErrorResponse): UserFriendlyError {
-  const template =
-    ERROR_MESSAGES[error.error.code] ||
-    ERROR_MESSAGES[ErrorCode.INTERNAL_SERVER_ERROR];
+    case ErrorCode.LEGACY_DATA_CORRUPT:
+      return {
+        title: 'Data Error',
+        message: 'The legacy loan data is corrupted or invalid. Please contact support for assistance.',
+        canRetry: false,
+      };
 
-  return {
-    ...template,
-    requestId: error.meta.requestId,
-  };
-}
+    case ErrorCode.AI_TIMEOUT:
+      return {
+        title: 'Service Temporarily Unavailable',
+        message: 'The risk assessment service is currently unavailable. Please try again in a moment.',
+        canRetry: true,
+      };
 
-/**
- * Determines if an error is retryable based on error code.
- */
-export function isRetryableError(errorCode: string): boolean {
-  const nonRetryableCodes = [
-    ErrorCode.NOT_FOUND,
-    ErrorCode.VALIDATION_FAILED,
-    ErrorCode.LEGACY_DATA_CORRUPT,
-  ];
-  return !nonRetryableCodes.includes(errorCode as ErrorCode);
+    case ErrorCode.NETWORK_ERROR:
+      return {
+        title: 'Network Error',
+        message: 'Unable to connect to the server. Please check your internet connection and try again.',
+        canRetry: true,
+      };
+
+    case ErrorCode.VALIDATION_FAILED:
+      return {
+        title: 'Invalid Request',
+        message: error.message || 'The request contains invalid data. Please check your input.',
+        canRetry: false,
+      };
+
+    case ErrorCode.INTERNAL_SERVER_ERROR:
+      return {
+        title: 'Server Error',
+        message: 'An unexpected server error occurred. Our team has been notified. Please try again later.',
+        canRetry: true,
+      };
+
+    default:
+      return {
+        title: 'Unknown Error',
+        message: error.message || 'An unexpected error occurred. Please try again.',
+        canRetry: true,
+      };
+  }
 }

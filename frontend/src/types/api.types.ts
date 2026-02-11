@@ -68,6 +68,7 @@ export const LoanReviewResponseSchema = z.object({
 // ERROR TYPES
 // ─────────────────────────────────────────────────────
 
+// eslint-disable-next-line no-unused-vars
 export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
   VALIDATION_FAILED = "VALIDATION_FAILED",

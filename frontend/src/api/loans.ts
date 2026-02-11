@@ -1,38 +1,16 @@
-import { AxiosError } from 'axios';
 import { apiClient } from './client';
-import { normalizeError, FrontendError } from './errors';
-import { LoanReviewResponse, ErrorResponse } from '@/types/api.types';
+import type { LoanReviewResponse } from '../types/api.types';
 
-/**
- * Loan API service with typed methods for backend communication.
- * All errors thrown are normalized to FrontendError.
- */
 export const loansApi = {
   /**
-   * Fetch loan review (loan data + risk score) by loan ID.
-   *
-   * @param loanId - Unique loan identifier
-   * @returns Promise resolving to loan review data with risk score
-   * @throws FrontendError - Normalized error with user-friendly message
-   *
-   * @example
-   * try {
-   *   const review = await loansApi.getReview('loan-123');
-   *   console.log(review.risk.score); // 72
-   * } catch (error) {
-   *   console.error(error.message); // "Loan not found..."
-   * }
+   * Fetch loan review data including risk assessment
+   * @param loanId - The unique identifier for the loan
+   * @returns Promise resolving to loan review data
+   * @throws ApiError when request fails
    */
   async getReview(loanId: string): Promise<LoanReviewResponse> {
-    try {
-      const response = await apiClient.get<LoanReviewResponse>(
-        `/loans/${encodeURIComponent(loanId)}`
-      );
-      return response.data;
-    } catch (error) {
-      const normalized = normalizeError(error as AxiosError<ErrorResponse> | Error);
-      throw normalized;
-    }
+    const response = await apiClient.get<LoanReviewResponse>(`/loans/${loanId}`);
+    return response.data;
   },
 };
 
