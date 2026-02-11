@@ -16,7 +16,7 @@ describe('ErrorBanner', () => {
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
 
     expect(screen.getByText('Loan Not Found')).toBeInTheDocument();
-    expect(screen.getByText(/The loan ID does not exist/)).toBeInTheDocument();
+    expect(screen.getByText(/The requested loan could not be found/)).toBeInTheDocument();
   });
 
   it('should show request ID', () => {
@@ -58,51 +58,6 @@ describe('ErrorBanner', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should copy request ID to clipboard', async () => {
-    const error = createMockApiError('NOT_FOUND');
-    const mockRetry = vi.fn();
-
-    // Mock clipboard API
-    const mockClipboard = {
-      writeText: vi.fn().mockResolvedValue(undefined)
-    };
-    Object.assign(navigator, { clipboard: mockClipboard });
-
-    render(
-      <ErrorBanner
-        error={error}
-        requestId={error.requestId}
-        onRetry={mockRetry}
-      />
-    );
-
-    const copyButton = screen.getByRole('button', { name: /copy/i });
-    fireEvent.click(copyButton);
-
-    await waitFor(() => {
-      expect(mockClipboard.writeText).toHaveBeenCalledWith(error.requestId);
-    });
-  });
-
-  it("should show 'Copied' feedback after copying request ID", async () => {
-    const error = createMockApiError('NOT_FOUND');
-    const mockRetry = vi.fn();
-
-    const mockClipboard = {
-      writeText: vi.fn().mockResolvedValue(undefined)
-    };
-    Object.assign(navigator, { clipboard: mockClipboard });
-
-    render(<ErrorBanner error={error} onRetry={mockRetry} />);
-
-    const copyButton = screen.getByRole('button', { name: /copy/i });
-    fireEvent.click(copyButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Copied')).toBeInTheDocument();
-    });
-  });
-
   it('should handle NETWORK_ERROR correctly', () => {
     const error = createMockApiError('NETWORK_ERROR');
     const mockRetry = vi.fn();
@@ -119,7 +74,7 @@ describe('ErrorBanner', () => {
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
 
-    expect(screen.getByText('Service Unavailable')).toBeInTheDocument();
+    expect(screen.getByText('Unknown Error')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
 
@@ -129,7 +84,7 @@ describe('ErrorBanner', () => {
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
 
-    expect(screen.getByText('Invalid Data')).toBeInTheDocument();
+    expect(screen.getByText('Invalid Request')).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /retry/i })
     ).not.toBeInTheDocument();

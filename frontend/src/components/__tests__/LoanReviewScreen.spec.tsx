@@ -3,25 +3,41 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LoanReviewScreen } from '@/components/LoanReviewScreen';
+import { ReactNode } from 'react';
+
+// Test wrapper with QueryClient
+function TestWrapper({ children }: { children: ReactNode }) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}
 
 describe('LoanReviewScreen', () => {
   it('should render the header', () => {
-    render(<LoanReviewScreen loanId={null} />);
+    render(<LoanReviewScreen loanId={null} />, { wrapper: TestWrapper });
 
     expect(screen.getByText(/enter a loan id/i)).toBeInTheDocument();
   });
 
   it('should render loan ID input field', () => {
-    render(<LoanReviewScreen loanId={null} />);
+    render(<LoanReviewScreen loanId={null} />, { wrapper: TestWrapper });
 
     const message = screen.getByText(/enter a loan id/i);
     expect(message).toBeInTheDocument();
   });
 
   it('should render load button', () => {
-    render(<LoanReviewScreen loanId={null} />);
+    render(<LoanReviewScreen loanId={null} />, { wrapper: TestWrapper });
 
     // No load button visible when no loanId provided
     expect(
@@ -30,7 +46,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should load default loan data', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     // Should show loading state initially
     expect(screen.queryAllByRole('generic', { hidden: true }).length >= 0).toBe(
@@ -44,7 +60,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display loan summary card when data loads', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     await waitFor(() => {
       expect(screen.getByText('Loan Details')).toBeInTheDocument();
@@ -52,7 +68,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display risk score card when data loads', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     await waitFor(() => {
       expect(screen.getByText('Risk Assessment')).toBeInTheDocument();
@@ -60,7 +76,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should show error banner when scenario is loanNotFound', async () => {
-    render(<LoanReviewScreen loanId="loan-invalid" />);
+    render(<LoanReviewScreen loanId="loan-invalid" />, { wrapper: TestWrapper });
 
     await waitFor(() => {
       expect(screen.getByText('Loan Not Found')).toBeInTheDocument();
@@ -68,7 +84,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should allow changing loan ID via input', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     const input = screen.getByPlaceholderText(/enter loan id/i);
     const loadButton = screen.getByRole('button', { name: /load/i });
@@ -84,7 +100,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should support Enter key to load loan', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     const input = screen.getByPlaceholderText(/enter loan id/i);
 
@@ -99,7 +115,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display low risk scenario correctly', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     await waitFor(() => {
       expect(screen.getByText('Low Risk')).toBeInTheDocument();
@@ -107,7 +123,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display high risk scenario correctly', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     await waitFor(() => {
       expect(screen.getByText('High Risk')).toBeInTheDocument();
@@ -115,7 +131,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should show empty state when no loan ID provided', () => {
-    render(<LoanReviewScreen loanId="" />);
+    render(<LoanReviewScreen loanId="" />, { wrapper: TestWrapper });
 
     expect(
       screen.getByText(/Enter a loan ID above to get started/i)
@@ -123,7 +139,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should handle retry button in error state', async () => {
-    render(<LoanReviewScreen loanId="loan-123" />);
+    render(<LoanReviewScreen loanId="loan-123" />, { wrapper: TestWrapper });
 
     await waitFor(() => {
       expect(screen.getByText('Service Timeout')).toBeInTheDocument();

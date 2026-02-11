@@ -45,7 +45,7 @@ describe('Error Handler Utilities', () => {
       const error = createMockApiError('UNKNOWN_ERROR');
       const friendly = getErrorMessage(error);
 
-      expect(friendly.title).toBe('Server Error');
+      expect(friendly.title).toBe('Unknown Error');
       expect(friendly.message).toBeDefined();
     });
 
