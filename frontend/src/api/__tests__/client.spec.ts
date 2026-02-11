@@ -4,8 +4,11 @@ import { apiClient } from '../client';
 describe('API Client (Axios)', () => {
   describe('Configuration', () => {
     it('should have correct base URL from environment', () => {
-      const expectedBaseURL =
-        import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      // The client always appends '/api' to the origin
+      const expectedBaseURL = `${
+        import.meta.env.VITE_API_URL ??
+        (import.meta.env.DEV ? 'http://localhost:3000' : undefined)
+      }/api`;
       const baseURL = apiClient.defaults.baseURL;
       expect(baseURL).toBe(expectedBaseURL);
     });
