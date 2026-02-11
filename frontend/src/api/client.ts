@@ -1,7 +1,31 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+/**
+ * Resolve API origin safely.
+ * - In production: VITE_API_URL MUST exist.
+ * - In development: fallback to localhost.
+ */
+const API_ORIGIN =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? 'http://localhost:3000' : undefined);
+
+if (!API_ORIGIN) {
+  throw new Error(
+    'VITE_API_URL is missing. Ensure it is injected at build time.'
+  );
+}
+
+/**
+ * Create Axios instance
+ * We append `/api` here so VITE_API_URL should NOT include `/api`
+ */
+export const apiClient: AxiosInstance = axios.create({
+  baseURL: `${API_ORIGIN}/api`,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 export interface ApiError {
   code: string;
@@ -10,21 +34,15 @@ export interface ApiError {
   requestId?: string;
 }
 
-export const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response interceptor
+/**
+ * Global response error interceptor
+ */
 apiClient.interceptors.response.use(
   (response) => response,
   (
     error: AxiosError<{
-      error: { code: string; message: string };
-      meta?: { requestId: string };
+      error?: { code?: string; message?: string };
+      meta?: { requestId?: string };
     }>
   ) => {
     const apiError: ApiError = {
@@ -33,7 +51,6 @@ apiClient.interceptors.response.use(
     };
 
     if (error.response) {
-      // Server responded with error
       const { data, status } = error.response;
 
       apiError.statusCode = status;
@@ -41,11 +58,9 @@ apiClient.interceptors.response.use(
       apiError.message = data?.error?.message || error.message;
       apiError.requestId = data?.meta?.requestId;
     } else if (error.request) {
-      // Request made but no response
       apiError.code = 'NETWORK_ERROR';
       apiError.message = 'Network error. Please check your connection.';
     } else {
-      // Something else happened
       apiError.message = error.message;
     }
 
@@ -53,7 +68,13 @@ apiClient.interceptors.response.use(
   }
 );
 
+/**
+ * Map HTTP status to domain error codes
+ */
 function mapStatusToCode(status: number): string {
+  if (status === 400) return 'BAD_REQUEST';
+  if (status === 401) return 'UNAUTHORIZED';
+  if (status === 403) return 'FORBIDDEN';
   if (status === 404) return 'NOT_FOUND';
   if (status === 422) return 'VALIDATION_FAILED';
   if (status === 503) return 'AI_TIMEOUT';
