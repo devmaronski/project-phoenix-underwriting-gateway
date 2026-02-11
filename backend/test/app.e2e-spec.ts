@@ -5,7 +5,10 @@ import { AppModule } from '../src/app.module';
 import { GlobalExceptionFilter } from '../src/common/filters/global-exception.filter';
 import { RequestIdInterceptor } from '../src/common/interceptors/request-id.interceptor';
 import { ResponseInterceptor } from '../src/common/interceptors/response.interceptor';
-import { MockRiskClient, MockRiskClientOptions } from '../src/risk/mock-risk-client';
+import {
+  MockRiskClient,
+  MockRiskClientOptions,
+} from '../src/risk/mock-risk-client';
 import { Server } from 'http';
 
 describe('App E2E', () => {
