@@ -1,6 +1,7 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 import { GlobalExceptionFilter } from './global-exception.filter';
 import { AppError } from '../errors/app-error';
+import { z } from 'zod';
 
 const TEST_REQUEST_ID = 'test-uuid-1234' as const;
 
@@ -100,5 +101,27 @@ describe('GlobalExceptionFilter', () => {
     const errorResponse = callArgs[0];
     const meta = errorResponse.meta as Record<string, unknown>;
     expect(meta.requestId).toBe(TEST_REQUEST_ID);
+  });
+
+  it('should map ZodError to VALIDATION_FAILED with 422', () => {
+    const schema = z.object({ name: z.string() });
+    const parsed = schema.safeParse({ name: 123 });
+    const mockHost = createMockHost(mockRequest, mockResponse);
+
+    if (parsed.success) {
+      throw new Error('Expected schema parse to fail');
+    }
+
+    filter.catch(parsed.error, mockHost);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(422);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: {
+        code: 'VALIDATION_FAILED',
+        message: 'Validation failed',
+        details: { issues: parsed.error.issues },
+      },
+      meta: { requestId: TEST_REQUEST_ID },
+    });
   });
 });

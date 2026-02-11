@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppError } from '../errors/app-error';
+import { ZodError } from 'zod';
 
 const DEFAULT_ERROR = {
   code: 'INTERNAL_SERVER_ERROR',
@@ -53,6 +54,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         statusCode: exception.statusCode,
       };
       details = exception.details;
+    } else if (exception instanceof ZodError) {
+      errorState = {
+        code: 'VALIDATION_FAILED',
+        message: 'Validation failed',
+        statusCode: 422,
+      };
+      details = { issues: exception.issues };
     } else if (exception instanceof HttpException) {
       errorState = {
         code: `HTTP_${exception.getStatus()}`,
