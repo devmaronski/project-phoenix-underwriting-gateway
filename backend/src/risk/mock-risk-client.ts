@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { IRiskClient } from './risk-client';
 import { RiskResponse } from './risk.types';
 import { LoanSanitized } from '../loans/transform/loan.schema';
@@ -17,7 +17,7 @@ export interface MockRiskClientOptions {
 export class MockRiskClient implements IRiskClient {
   private options: MockRiskClientOptions;
 
-  constructor(options: MockRiskClientOptions = {}) {
+  constructor(@Optional() options: MockRiskClientOptions = {}) {
     this.options = {
       failureMode: 'none',
       timeoutMs: 5000,
