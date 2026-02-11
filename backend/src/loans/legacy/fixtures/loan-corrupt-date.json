@@ -1,0 +1,8 @@
+{
+  "id": "LOAN-CORRUPT-DATE-001",
+  "borrower_name": "John Doe",
+  "loan_amount_cents": 50000,
+  "issued_date": "01-15-2024",
+  "interest_rate_percent": 5.5,
+  "term_months": 48
+}
