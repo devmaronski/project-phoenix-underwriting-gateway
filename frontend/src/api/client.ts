@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { ErrorCode } from '../types/api.types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export interface ApiError {
   code: string;
@@ -14,23 +15,28 @@ export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 // Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<{ error: { code: string; message: string }; meta?: { requestId: string } }>) => {
+  (
+    error: AxiosError<{
+      error: { code: string; message: string };
+      meta?: { requestId: string };
+    }>
+  ) => {
     const apiError: ApiError = {
       code: 'UNKNOWN_ERROR',
-      message: 'An unexpected error occurred',
+      message: 'An unexpected error occurred'
     };
 
     if (error.response) {
       // Server responded with error
       const { data, status } = error.response;
-      
+
       apiError.statusCode = status;
       apiError.code = data?.error?.code || mapStatusToCode(status);
       apiError.message = data?.error?.message || error.message;

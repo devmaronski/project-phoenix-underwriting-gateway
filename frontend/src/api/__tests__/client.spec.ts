@@ -13,7 +13,9 @@ describe('API Client (Axios)', () => {
     });
 
     it('should have Content-Type header', () => {
-      expect(apiClient.defaults.headers['Content-Type']).toBe('application/json');
+      expect(apiClient.defaults.headers['Content-Type']).toBe(
+        'application/json'
+      );
     });
   });
 

@@ -9,7 +9,7 @@ Phase 1 uses mock data to develop and test the UI without a backend. The mock da
 ### 1. Success (Default)
 
 ```typescript
-MOCK_SCENARIOS.success()
+MOCK_SCENARIOS.success();
 ```
 
 - **Risk Score**: 72 (Medium-High Risk)
@@ -20,7 +20,7 @@ MOCK_SCENARIOS.success()
 ### 2. Low Risk
 
 ```typescript
-MOCK_SCENARIOS.lowRisk()
+MOCK_SCENARIOS.lowRisk();
 ```
 
 - **Risk Score**: 25 (Low Risk)
@@ -30,7 +30,7 @@ MOCK_SCENARIOS.lowRisk()
 ### 3. Medium Risk
 
 ```typescript
-MOCK_SCENARIOS.mediumRisk()
+MOCK_SCENARIOS.mediumRisk();
 ```
 
 - **Risk Score**: 45 (Medium Risk)
@@ -40,7 +40,7 @@ MOCK_SCENARIOS.mediumRisk()
 ### 4. High Risk
 
 ```typescript
-MOCK_SCENARIOS.highRisk()
+MOCK_SCENARIOS.highRisk();
 ```
 
 - **Risk Score**: 85 (High Risk)
@@ -51,7 +51,7 @@ MOCK_SCENARIOS.highRisk()
 ### 5. Loan Not Found
 
 ```typescript
-MOCK_SCENARIOS.loanNotFound()
+MOCK_SCENARIOS.loanNotFound();
 ```
 
 - **Error Code**: NOT_FOUND
@@ -62,7 +62,7 @@ MOCK_SCENARIOS.loanNotFound()
 ### 6. AI Timeout
 
 ```typescript
-MOCK_SCENARIOS.aiTimeout()
+MOCK_SCENARIOS.aiTimeout();
 ```
 
 - **Error Code**: AI_TIMEOUT
@@ -73,7 +73,7 @@ MOCK_SCENARIOS.aiTimeout()
 ### 7. Legacy Data Corrupt
 
 ```typescript
-MOCK_SCENARIOS.legacyDataCorrupt()
+MOCK_SCENARIOS.legacyDataCorrupt();
 ```
 
 - **Error Code**: LEGACY_DATA_CORRUPT
@@ -84,7 +84,7 @@ MOCK_SCENARIOS.legacyDataCorrupt()
 ### 8. Network Error
 
 ```typescript
-MOCK_SCENARIOS.networkError()
+MOCK_SCENARIOS.networkError();
 ```
 
 - **Error Code**: NETWORK_ERROR
@@ -101,7 +101,7 @@ import { LoanReviewScreen } from "@/components/LoanReviewScreen";
 
 export function App() {
   return (
-    <LoanReviewScreen 
+    <LoanReviewScreen
       defaultLoanId="loan-123"
       mockScenario="success"  // Change this to test scenarios
     />
@@ -112,15 +112,15 @@ export function App() {
 ### In Tests
 
 ```typescript
-import { renderHook, waitFor } from "@testing-library/react";
-import { useLoanReviewState } from "@/hooks/useLoanReviewState";
+import { renderHook, waitFor } from '@testing-library/react';
+import { useLoanReviewState } from '@/hooks/useLoanReviewState';
 
-it("should handle high risk", async () => {
+it('should handle high risk', async () => {
   const { result } = renderHook(() =>
     useLoanReviewState({
-      loanId: "loan-123",
-      mockScenario: "highRisk",  // Use specific scenario
-      simulateDelay: 50,
+      loanId: 'loan-123',
+      mockScenario: 'highRisk', // Use specific scenario
+      simulateDelay: 50
     })
   );
 
@@ -133,27 +133,31 @@ it("should handle high risk", async () => {
 ## Creating Custom Mock Data
 
 ```typescript
-import { createMockLoan, createMockRisk, createMockLoanReview } from "@/mocks/loan-review.mock";
+import {
+  createMockLoan,
+  createMockRisk,
+  createMockLoanReview
+} from '@/mocks/loan-review.mock';
 
 // Create loan with custom values
 const customLoan = createMockLoan({
-  borrower_name: "Jane Smith",
+  borrower_name: 'Jane Smith',
   loan_amount_dollars: 500000,
   interest_rate_percent: 3.5,
-  term_months: 240,
+  term_months: 240
 });
 
 // Create risk with custom values
 const customRisk = createMockRisk({
   score: 50,
-  topReasons: ["Custom reason 1", "Custom reason 2"],
-  allReasons: ["Custom reason 1", "Custom reason 2", "Custom reason 3"],
+  topReasons: ['Custom reason 1', 'Custom reason 2'],
+  allReasons: ['Custom reason 1', 'Custom reason 2', 'Custom reason 3']
 });
 
 // Create full review with custom data
 const customReview = createMockLoanReview({
   loan: customLoan,
-  risk: customRisk,
+  risk: customRisk
 });
 ```
 
@@ -163,10 +167,10 @@ Control network delay simulation:
 
 ```typescript
 useLoanReviewState({
-  loanId: "loan-123",
-  mockScenario: "success",
-  simulateDelay: 1000,  // 1 second delay (default: 800ms)
-})
+  loanId: 'loan-123',
+  mockScenario: 'success',
+  simulateDelay: 1000 // 1 second delay (default: 800ms)
+});
 ```
 
 ## Simulating Random Errors
@@ -175,10 +179,10 @@ Force error responses (useful for testing error handling):
 
 ```typescript
 useLoanReviewState({
-  loanId: "loan-123",
-  mockScenario: "success",
-  simulateError: true,  // Returns error instead of success
-})
+  loanId: 'loan-123',
+  mockScenario: 'success',
+  simulateError: true // Returns error instead of success
+});
 ```
 
 ## Phase 2: Replacing Mock Data

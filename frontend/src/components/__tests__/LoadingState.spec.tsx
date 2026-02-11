@@ -2,30 +2,30 @@
  * Tests for LoadingState component.
  */
 
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { LoadingState } from "@/components/LoadingState";
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { LoadingState } from '@/components/LoadingState';
 
-describe("LoadingState", () => {
-  it("should render without crashing", () => {
+describe('LoadingState', () => {
+  it('should render without crashing', () => {
     render(<LoadingState />);
 
     // Should have at least some skeleton elements
-    const skeletons = screen.queryAllByRole("presentation", {
-      hidden: true,
+    const skeletons = screen.queryAllByRole('presentation', {
+      hidden: true
     });
     expect(skeletons.length >= 0).toBe(true);
   });
 
-  it("should show loading placeholders", () => {
+  it('should show loading placeholders', () => {
     const { container } = render(<LoadingState />);
 
     // Should have animated pulse classes
-    const animatedElements = container.querySelectorAll(".animate-pulse");
+    const animatedElements = container.querySelectorAll('.animate-pulse');
     expect(animatedElements.length).toBeGreaterThan(0);
   });
 
-  it("should render two card skeletons", () => {
+  it('should render two card skeletons', () => {
     const { container } = render(<LoadingState />);
 
     // Should have Card components (divs with border)

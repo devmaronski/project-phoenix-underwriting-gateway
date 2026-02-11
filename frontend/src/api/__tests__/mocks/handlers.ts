@@ -1,5 +1,8 @@
 import { http, HttpResponse } from 'msw';
-import { MOCK_SCENARIOS, createMockErrorResponse } from '@/mocks/loan-review.mock';
+import {
+  MOCK_SCENARIOS,
+  createMockErrorResponse
+} from '@/mocks/loan-review.mock';
 import { ErrorCode } from '@/types/api.types';
 
 const API_BASE_URL = 'http://localhost:3000/api';
@@ -57,7 +60,7 @@ export const handlers = [
     // Default: Return success with mock data
     const mockData = MOCK_SCENARIOS.success();
     return HttpResponse.json(mockData, { status: 200 });
-  }),
+  })
 ];
 
 export default handlers;

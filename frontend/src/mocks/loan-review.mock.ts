@@ -8,8 +8,8 @@ import {
   LoanReviewResponse,
   ErrorResponse,
   ErrorCode,
-  Risk,
-} from "@/types/api.types";
+  Risk
+} from '@/types/api.types';
 
 // ─────────────────────────────────────────────────────
 // MOCK LOAN DATA
@@ -17,13 +17,13 @@ import {
 
 export function createMockLoan(overrides?: Partial<Loan>): Loan {
   return {
-    id: "loan-123",
-    borrower_name: "John Doe",
+    id: 'loan-123',
+    borrower_name: 'John Doe',
     loan_amount_dollars: 250000,
-    issued_date: "2025-01-15T10:30:00Z",
+    issued_date: '2025-01-15T10:30:00Z',
     interest_rate_percent: 6.5,
     term_months: 360,
-    ...overrides,
+    ...overrides
   };
 }
 
@@ -31,18 +31,18 @@ export function createMockRisk(overrides?: Partial<Risk>): Risk {
   return {
     score: 72,
     topReasons: [
-      "High debt-to-income ratio",
-      "Recent hard inquiry",
-      "Lower credit utilization",
+      'High debt-to-income ratio',
+      'Recent hard inquiry',
+      'Lower credit utilization'
     ],
     allReasons: [
-      "High debt-to-income ratio",
-      "Recent hard inquiry",
-      "Lower credit utilization",
-      "Limited credit history",
-      "Multiple recent inquiries",
+      'High debt-to-income ratio',
+      'Recent hard inquiry',
+      'Lower credit utilization',
+      'Limited credit history',
+      'Multiple recent inquiries'
     ],
-    ...overrides,
+    ...overrides
   };
 }
 
@@ -53,9 +53,9 @@ export function createMockLoanReview(
     loan: createMockLoan(),
     risk: createMockRisk(),
     meta: {
-      requestId: crypto.randomUUID(),
+      requestId: crypto.randomUUID()
     },
-    ...overrides,
+    ...overrides
   };
 }
 
@@ -68,24 +68,24 @@ export function createMockErrorResponse(
   message?: string
 ): ErrorResponse {
   const messages: Record<string, string> = {
-    [ErrorCode.NOT_FOUND]: "Loan not found. Check the ID.",
-    [ErrorCode.VALIDATION_FAILED]: "Invalid loan data provided.",
+    [ErrorCode.NOT_FOUND]: 'Loan not found. Check the ID.',
+    [ErrorCode.VALIDATION_FAILED]: 'Invalid loan data provided.',
     [ErrorCode.LEGACY_DATA_CORRUPT]:
-      "Legacy data is corrupted. Please contact support.",
-    [ErrorCode.AI_TIMEOUT]: "Risk service unavailable. Please retry.",
-    [ErrorCode.RISK_SERVICE_DOWN]: "Risk service is currently offline.",
-    [ErrorCode.NETWORK_ERROR]: "Network error. Check your connection.",
-    [ErrorCode.INTERNAL_SERVER_ERROR]: "Server error. Please try again later.",
+      'Legacy data is corrupted. Please contact support.',
+    [ErrorCode.AI_TIMEOUT]: 'Risk service unavailable. Please retry.',
+    [ErrorCode.RISK_SERVICE_DOWN]: 'Risk service is currently offline.',
+    [ErrorCode.NETWORK_ERROR]: 'Network error. Check your connection.',
+    [ErrorCode.INTERNAL_SERVER_ERROR]: 'Server error. Please try again later.'
   };
 
   return {
     error: {
       code,
-      message: message || messages[code] || "An unknown error occurred.",
+      message: message || messages[code] || 'An unknown error occurred.'
     },
     meta: {
-      requestId: crypto.randomUUID(),
-    },
+      requestId: crypto.randomUUID()
+    }
   };
 }
 
@@ -100,22 +100,22 @@ export const MOCK_SCENARIOS = {
     createMockLoanReview({
       risk: createMockRisk({
         score: 25,
-        topReasons: ["Excellent payment history", "High credit score"],
+        topReasons: ['Excellent payment history', 'High credit score'],
         allReasons: [
-          "Excellent payment history",
-          "High credit score",
-          "Long credit history",
-        ],
-      }),
+          'Excellent payment history',
+          'High credit score',
+          'Long credit history'
+        ]
+      })
     }),
 
   mediumRisk: (): LoanReviewResponse =>
     createMockLoanReview({
       risk: createMockRisk({
         score: 45,
-        topReasons: ["Moderate debt level", "Few recent inquiries"],
-        allReasons: ["Moderate debt level", "Few recent inquiries"],
-      }),
+        topReasons: ['Moderate debt level', 'Few recent inquiries'],
+        allReasons: ['Moderate debt level', 'Few recent inquiries']
+      })
     }),
 
   highRisk: (): LoanReviewResponse =>
@@ -123,18 +123,18 @@ export const MOCK_SCENARIOS = {
       risk: createMockRisk({
         score: 85,
         topReasons: [
-          "Very high debt-to-income",
-          "Multiple recent hard inquiries",
-          "Recent delinquency",
+          'Very high debt-to-income',
+          'Multiple recent hard inquiries',
+          'Recent delinquency'
         ],
         allReasons: [
-          "Very high debt-to-income",
-          "Multiple recent hard inquiries",
-          "Recent delinquency",
-          "Limited credit history",
-          "Recent collections",
-        ],
-      }),
+          'Very high debt-to-income',
+          'Multiple recent hard inquiries',
+          'Recent delinquency',
+          'Limited credit history',
+          'Recent collections'
+        ]
+      })
     }),
 
   loanNotFound: (): ErrorResponse =>
@@ -143,12 +143,11 @@ export const MOCK_SCENARIOS = {
   legacyDataCorrupt: (): ErrorResponse =>
     createMockErrorResponse(ErrorCode.LEGACY_DATA_CORRUPT),
 
-  aiTimeout: (): ErrorResponse =>
-    createMockErrorResponse(ErrorCode.AI_TIMEOUT),
+  aiTimeout: (): ErrorResponse => createMockErrorResponse(ErrorCode.AI_TIMEOUT),
 
   networkError: (): ErrorResponse =>
     createMockErrorResponse(
       ErrorCode.NETWORK_ERROR,
-      "Unable to reach the server."
-    ),
+      'Unable to reach the server.'
+    )
 };

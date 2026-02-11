@@ -82,10 +82,10 @@ describe('Loans API Service', () => {
               loan_amount_dollars: 100000,
               issued_date: '2025-01-01T00:00:00Z',
               interest_rate_percent: 5.0,
-              term_months: 360,
+              term_months: 360
             },
             risk: { score: 50, topReasons: ['test'] },
-            meta: { requestId: 'req-test' },
+            meta: { requestId: 'req-test' }
           });
         })
       );

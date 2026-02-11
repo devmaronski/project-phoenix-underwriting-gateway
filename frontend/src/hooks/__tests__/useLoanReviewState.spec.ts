@@ -3,28 +3,26 @@
  * Covers: loading, success, error, refetch scenarios.
  */
 
-import { describe, it, expect } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
-import { useLoanReviewState } from "@/hooks/useLoanReviewState";
-import { ErrorCode } from "@/types/api.types";
+import { describe, it, expect } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
+import { useLoanReviewState } from '@/hooks/useLoanReviewState';
+import { ErrorCode } from '@/types/api.types';
 
-describe("useLoanReviewState", () => {
-  it("should initialize with null data and loading false", () => {
-    const { result } = renderHook(() =>
-      useLoanReviewState({ loanId: null })
-    );
+describe('useLoanReviewState', () => {
+  it('should initialize with null data and loading false', () => {
+    const { result } = renderHook(() => useLoanReviewState({ loanId: null }));
 
     expect(result.current.data).toBeNull();
     expect(result.current.error).toBeNull();
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should load data successfully", async () => {
+  it('should load data successfully', async () => {
     const { result } = renderHook(() =>
       useLoanReviewState({
-        loanId: "loan-123",
-        mockScenario: "success",
-        simulateDelay: 50,
+        loanId: 'loan-123',
+        mockScenario: 'success',
+        simulateDelay: 50
       })
     );
 
@@ -41,12 +39,12 @@ describe("useLoanReviewState", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("should handle errors", async () => {
+  it('should handle errors', async () => {
     const { result } = renderHook(() =>
       useLoanReviewState({
-        loanId: "loan-123",
-        mockScenario: "loanNotFound",
-        simulateDelay: 50,
+        loanId: 'loan-123',
+        mockScenario: 'loanNotFound',
+        simulateDelay: 50
       })
     );
 
@@ -59,12 +57,12 @@ describe("useLoanReviewState", () => {
     expect(result.current.error?.error.code).toBe(ErrorCode.NOT_FOUND);
   });
 
-  it("should refetch on demand", async () => {
+  it('should refetch on demand', async () => {
     const { result } = renderHook(() =>
       useLoanReviewState({
-        loanId: "loan-123",
-        mockScenario: "success",
-        simulateDelay: 50,
+        loanId: 'loan-123',
+        mockScenario: 'success',
+        simulateDelay: 50
       })
     );
 
@@ -83,15 +81,15 @@ describe("useLoanReviewState", () => {
     expect(result.current.data).not.toBeNull();
   });
 
-  it("should handle loanId changes", async () => {
+  it('should handle loanId changes', async () => {
     const { result, rerender } = renderHook(
       ({ loanId }) =>
         useLoanReviewState({
           loanId,
-          mockScenario: "success",
-          simulateDelay: 50,
+          mockScenario: 'success',
+          simulateDelay: 50
         }),
-      { initialProps: { loanId: "loan-123" } }
+      { initialProps: { loanId: 'loan-123' } }
     );
 
     await waitFor(() => {
@@ -99,22 +97,22 @@ describe("useLoanReviewState", () => {
     });
 
     // Change loanId
-    rerender({ loanId: "loan-456" });
+    rerender({ loanId: 'loan-456' });
 
     await waitFor(() => {
       expect(result.current.data).not.toBeNull();
     });
   });
 
-  it("should return to empty state when loanId is cleared", async () => {
+  it('should return to empty state when loanId is cleared', async () => {
     const { result, rerender } = renderHook(
       ({ loanId }: { loanId: string | null }) =>
         useLoanReviewState({
           loanId,
-          mockScenario: "success",
-          simulateDelay: 50,
+          mockScenario: 'success',
+          simulateDelay: 50
         }),
-      { initialProps: { loanId: "loan-123" as string | null } }
+      { initialProps: { loanId: 'loan-123' as string | null } }
     );
 
     await waitFor(() => {
@@ -128,27 +126,22 @@ describe("useLoanReviewState", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("should support different mock scenarios", async () => {
+  it('should support different mock scenarios', async () => {
     const scenarios: Array<
-      | "success"
-      | "lowRisk"
-      | "mediumRisk"
-      | "highRisk"
-      | "loanNotFound"
-      | "aiTimeout"
-    > = [
-      "lowRisk",
-      "mediumRisk",
-      "highRisk",
-      "success",
-    ];
+      | 'success'
+      | 'lowRisk'
+      | 'mediumRisk'
+      | 'highRisk'
+      | 'loanNotFound'
+      | 'aiTimeout'
+    > = ['lowRisk', 'mediumRisk', 'highRisk', 'success'];
 
     for (const scenario of scenarios) {
       const { result } = renderHook(() =>
         useLoanReviewState({
-          loanId: "loan-123",
+          loanId: 'loan-123',
           mockScenario: scenario,
-          simulateDelay: 50,
+          simulateDelay: 50
         })
       );
 
