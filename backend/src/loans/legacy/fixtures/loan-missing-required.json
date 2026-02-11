@@ -1,0 +1,6 @@
+{
+  "id": "LOAN-MISSING-REQUIRED-001",
+  "borrower_name": "Alice Williams",
+  "issued_date": "2024-03-10",
+  "interest_rate_percent": 4.75
+}
