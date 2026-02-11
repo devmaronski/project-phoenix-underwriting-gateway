@@ -1,20 +1,12 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+/**
+ * Main App component for Phase 1.
+ * Renders the LoanReviewScreen with a demo scenario.
+ */
 
-const App: React.FC = () => {
-  return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-3xl p-6">
-        <h1 className="text-2xl font-semibold">Project Phoenix</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Phase 0 setup is complete.
-        </p>
-        <div className="mt-4">
-          <Button type="button">Primary Button</Button>
-        </div>
-      </div>
-    </main>
-  );
-};
+import { LoanReviewScreen } from "@/components/LoanReviewScreen";
+
+export function App() {
+  return <LoanReviewScreen defaultLoanId="loan-123" mockScenario="success" />;
+}
 
 export default App;
