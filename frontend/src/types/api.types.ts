@@ -68,16 +68,17 @@ export const LoanReviewResponseSchema = z.object({
 // ERROR TYPES
 // ─────────────────────────────────────────────────────
 
-// eslint-disable-next-line no-unused-vars
-export enum ErrorCode {
-  NOT_FOUND = "NOT_FOUND",
-  VALIDATION_FAILED = "VALIDATION_FAILED",
-  LEGACY_DATA_CORRUPT = "LEGACY_DATA_CORRUPT",
-  AI_TIMEOUT = "AI_TIMEOUT",
-  RISK_SERVICE_DOWN = "RISK_SERVICE_DOWN",
-  NETWORK_ERROR = "NETWORK_ERROR",
-  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
-}
+export const ErrorCodeSchema = z.enum([
+  "NOT_FOUND",
+  "VALIDATION_FAILED",
+  "LEGACY_DATA_CORRUPT",
+  "AI_TIMEOUT",
+  "RISK_SERVICE_DOWN",
+  "NETWORK_ERROR",
+  "INTERNAL_SERVER_ERROR",
+]);
+
+export type ErrorCode = z.infer<typeof ErrorCodeSchema>;
 
 export interface ErrorDetail {
   code: ErrorCode | string;
@@ -94,7 +95,7 @@ export interface ErrorResponse {
 
 export const ErrorResponseSchema = z.object({
   error: z.object({
-    code: z.string(),
+    code: ErrorCodeSchema,
     message: z.string(),
     details: z.record(z.string(), z.unknown()).optional(),
   }),
