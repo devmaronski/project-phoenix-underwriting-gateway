@@ -1,27 +1,22 @@
 import { Module } from '@nestjs/common';
+import { LoansController } from './loans.controller';
+import { LoansService } from './loans.service';
 import { InMemoryLegacyRepository } from './legacy/in-memory-legacy.repository';
-import { LegacyLoan } from './legacy/loan.types';
-
-// Import fixtures
-import loanValidFixture from './legacy/fixtures/loan-valid.json';
-import loanCorruptDateFixture from './legacy/fixtures/loan-corrupt-date.json';
-import loanCorruptCentsFixture from './legacy/fixtures/loan-corrupt-cents.json';
-import loanMissingRequiredFixture from './legacy/fixtures/loan-missing-required.json';
-
-const fixtures: LegacyLoan[] = [
-  loanValidFixture as LegacyLoan,
-  loanCorruptDateFixture as LegacyLoan,
-  loanCorruptCentsFixture as LegacyLoan,
-  loanMissingRequiredFixture as LegacyLoan,
-];
+import { loadLoanFixtures } from './legacy/fixtures.loader';
+import { RiskModule } from '../risk/risk.module';
 
 @Module({
+  imports: [RiskModule],
+  controllers: [LoansController],
   providers: [
+    LoansService,
     {
-      provide: 'LegacyLoanRepository',
-      useValue: new InMemoryLegacyRepository(fixtures),
+      provide: InMemoryLegacyRepository,
+      useFactory: () => {
+        const fixtures = loadLoanFixtures();
+        return new InMemoryLegacyRepository(fixtures);
+      },
     },
   ],
-  exports: ['LegacyLoanRepository'],
 })
 export class LoansModule {}
