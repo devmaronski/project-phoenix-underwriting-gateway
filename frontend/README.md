@@ -5,7 +5,7 @@
 This is the **Phase 1: UI Skeleton** implementation of the Project Phoenix Loan Review Screen. The frontend displays loan details and risk assessments with progressive disclosure for detailed risk factors.
 
 **Phase 1 Status**: Complete (mock data)  
-**Phase 2**: Real API integration with TanStack Query  
+**Phase 2 Status**: Complete (API integration with TanStack Query)  
 **Phase 3**: Full end-to-end testing and error handling
 
 ---
@@ -43,6 +43,18 @@ This is the **Phase 1: UI Skeleton** implementation of the Project Phoenix Loan 
 
 ```
 frontend/src/
+├── api/                            # Phase 2: API client layer
+│   ├── __tests__/
+│   │   ├── mocks/
+│   │   │   └── handlers.ts         # MSW handlers for tests
+│   │   ├── setup.ts                # MSW server setup
+│   │   ├── client.spec.ts          # API client tests
+│   │   ├── errors.spec.ts          # Error normalization tests
+│   │   └── loans.spec.ts           # Loans API tests
+│   ├── client.ts                   # Axios HTTP client
+│   ├── errors.ts                   # Error normalization layer
+│   ├── loans.ts                    # Loan API endpoints
+│   └── request-context.ts          # Request ID utilities
 ├── components/
 │   ├── __tests__/                  # Component tests
 │   │   ├── LoanReviewScreen.spec.tsx
@@ -64,9 +76,11 @@ frontend/src/
 │   └── LoanSummaryCard.tsx         # Loan details
 ├── hooks/
 │   ├── __tests__/
+│   │   ├── useLoanReview.spec.ts   # Phase 2: TanStack Query hook tests
 │   │   ├── useLoanReviewState.spec.ts
 │   │   └── useDisclosure.spec.ts
-│   ├── useLoanReviewState.ts       # Mock state (Phase 1) → TanStack Query (Phase 2)
+│   ├── useLoanReview.ts            # Phase 2: TanStack Query hook
+│   ├── useLoanReviewState.ts       # Phase 1: Mock state hook
 │   └── useDisclosure.ts            # Expand/collapse logic
 ├── types/
 │   └── api.types.ts                # API types + Zod schemas
@@ -78,7 +92,7 @@ frontend/src/
 │   └── format.ts                   # Date/currency formatting
 ├── mocks/
 │   └── loan-review.mock.ts         # Mock data generators
-├── App.tsx                         # Root component
+├── App.tsx                         # Root component + QueryClientProvider
 └── main.tsx                        # Entry point
 ```
 
@@ -321,6 +335,189 @@ See `.env.example` for available variables.
 - Replace `useLoanReviewState` with TanStack Query hook
 - Add retry logic and caching
 - Wire real API calls
+
+---
+
+## Phase 2: API Client & TanStack Query Integration
+
+### Overview
+
+Phase 2 replaces the mock `useLoanReviewState` hook with production-ready API integration using TanStack Query. The implementation maintains full backwards compatibility with Phase 1 components.
+
+### New Dependencies
+
+- **@tanstack/react-query** – Server state management with caching and retry logic
+- **axios** – HTTP client for backend communication
+- **msw** – Mock Service Worker for realistic HTTP testing
+- **@tanstack/react-query-devtools** – Dev tools for debugging queries
+
+### API Client Architecture
+
+#### 1. HTTP Client (`api/client.ts`)
+
+Axios instance with:
+- Base URL from environment variable (`VITE_API_BASE_URL`)
+- 30-second timeout for slow backend operations
+- Request/response interceptors for error handling
+
+#### 2. Error Normalization (`api/errors.ts`)
+
+Maps HTTP status codes and backend error codes to user-friendly messages:
+
+```typescript
+interface FrontendError {
+  code: ErrorCode | string;
+  message: string;
+  retryable: boolean;
+  meta: {
+    requestId?: string;
+    originalMessage?: string;
+  };
+}
+```
+
+**Smart Retry Logic:**
+- ✅ Auto-retry: 503, 500, network errors (transient failures)
+- ❌ No retry: 404, 422, 400 (user/validation errors)
+- Exponential backoff: 1s, 2s, 4s (capped at 30s)
+
+#### 3. Loan API Service (`api/loans.ts`)
+
+Typed service layer with methods:
+
+```typescript
+export const loansApi = {
+  async getReview(loanId: string): Promise<LoanReviewResponse>
+};
+```
+
+All errors are normalized to `FrontendError` before throwing.
+
+#### 4. TanStack Query Hook (`hooks/useLoanReview.ts`)
+
+Production hook with identical interface to Phase 1 mock:
+
+```typescript
+const { data, error, isLoading, refetch } = useLoanReview(loanId);
+```
+
+**Features:**
+- Query key caching: Different loan IDs cached separately
+- Stale-while-revalidate: 5-minute stale time
+- Garbage collection: 10-minute cache retention
+- Request ID propagation for debugging
+- Disabled when `loanId` is null
+
+### Environment Configuration
+
+Set the API base URL in `.env.local`:
+
+```env
+VITE_API_BASE_URL=http://localhost:3000/api
+```
+
+**Default:** `http://localhost:3000/api`
+
+### Error Code Mapping
+
+| Backend Error | HTTP Status | User Message | Retryable |
+|--------------|-------------|--------------|-----------|
+| NOT_FOUND | 404 | "Loan not found. Please check the loan ID and try again." | ❌ No |
+| VALIDATION_FAILED | 400 | "Invalid request. Please check your input." | ❌ No |
+| LEGACY_DATA_CORRUPT | 422 | "Loan data is unavailable or corrupted. Please contact support with the request ID below." | ❌ No |
+| AI_TIMEOUT | 408/503 | "Request timed out. The risk service is taking too long. Please retry." | ✅ Yes |
+| RISK_SERVICE_DOWN | 503 | "Risk service is currently unavailable. Please retry in a moment." | ✅ Yes |
+| INTERNAL_SERVER_ERROR | 500 | "Internal server error. Our team has been notified. Please retry." | ✅ Yes |
+| NETWORK_ERROR | (no response) | "Network connection error. Please check your internet and retry." | ✅ Yes |
+
+### Testing with MSW
+
+Phase 2 uses Mock Service Worker for realistic HTTP testing:
+
+**Setup:** `api/__tests__/setup.ts` configures MSW server lifecycle  
+**Handlers:** `api/__tests__/mocks/handlers.ts` intercepts API requests
+
+**Special Loan IDs for Testing:**
+- `mock-not-found` → 404 NOT_FOUND
+- `mock-legacy-corrupt` → 422 LEGACY_DATA_CORRUPT
+- `mock-timeout` → 503 AI_TIMEOUT
+- `mock-service-down` → 503 RISK_SERVICE_DOWN
+- `mock-server-error` → 500 INTERNAL_SERVER_ERROR
+- Default → 200 success with mock data
+
+### Test Coverage
+
+Phase 2 adds comprehensive test coverage:
+
+- ✅ **API Client Tests** (`client.spec.ts`) – Configuration and interceptors
+- ✅ **Error Normalization Tests** (`errors.spec.ts`) – All error codes and retry logic
+- ✅ **Service Layer Tests** (`loans.spec.ts`) – Happy path and error scenarios
+- ✅ **Hook Integration Tests** (`useLoanReview.spec.ts`) – Query lifecycle and caching
+
+**Target: 70%+ coverage for new code**
+
+### QueryClientProvider Setup
+
+App.tsx wraps the application with TanStack Query provider:
+
+```typescript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false, // Each hook defines its own retry logic
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+    },
+  },
+});
+
+<QueryClientProvider client={queryClient}>
+  <LoanReviewScreen />
+  <ReactQueryDevtools initialIsOpen={false} />
+</QueryClientProvider>
+```
+
+### Request ID Tracking
+
+Every API response includes `meta.requestId` for debugging:
+
+```typescript
+// Success response
+{
+  loan: { ... },
+  risk: { ... },
+  meta: { requestId: "uuid-123..." }
+}
+
+// Error response
+{
+  error: { code: "NOT_FOUND", message: "..." },
+  meta: { requestId: "uuid-456..." }
+}
+```
+
+Request IDs are:
+- Extracted from responses/errors
+- Displayed in error UI
+- Available for copying to clipboard
+- Useful for support debugging
+
+### Backwards Compatibility
+
+✅ **No component changes required**  
+✅ **Hook interface unchanged**  
+✅ **All Phase 1 tests pass**  
+✅ **Type definitions reused**
+
+Components simply switch from:
+```typescript
+const { data, error, isLoading, refetch } = useLoanReviewState({ loanId });
+```
+
+To:
+```typescript
+const { data, error, isLoading, refetch } = useLoanReview(loanId);
+```
 
 ---
 
