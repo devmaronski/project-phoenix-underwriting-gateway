@@ -1,0 +1,104 @@
+[
+  {
+    "id": "LOAN-VALID-001",
+    "borrower_name": "Jane Smith",
+    "loan_amount_cents": 100000,
+    "issued_date": "2024-01-15",
+    "interest_rate_percent": 5.75,
+    "term_months": 60
+  },
+  {
+    "id": "LOAN-VALID-002",
+    "borrower_name": "John Doe",
+    "loan_amount_cents": 25000000,
+    "issued_date": "2025-01-15",
+    "interest_rate_percent": 6.5,
+    "term_months": 360
+  },
+  {
+    "id": "LOAN-VALID-003",
+    "borrower_name": "Katherine Johnson",
+    "loan_amount_cents": 320000,
+    "issued_date": "2024-05-01",
+    "interest_rate_percent": 4.9,
+    "term_months": 72
+  },
+  {
+    "id": "LOAN-VALID-004",
+    "borrower_name": "Ada Lovelace",
+    "loan_amount_cents": 50000000,
+    "issued_date": "2023-03-10",
+    "interest_rate_percent": 3.5,
+    "term_months": 240
+  },
+  {
+    "id": "LOAN-CORRUPT-DATE-001",
+    "borrower_name": "John Doe",
+    "loan_amount_cents": 50000,
+    "issued_date": "01-15-2024",
+    "interest_rate_percent": 5.5,
+    "term_months": 48
+  },
+  {
+    "id": "LOAN-CORRUPT-CENTS-001",
+    "borrower_name": "Bob Johnson",
+    "loan_amount_cents": 25000.5,
+    "issued_date": "2024-02-20",
+    "interest_rate_percent": 6.25,
+    "term_months": 84
+  },
+  {
+    "id": "LOAN-MISSING-REQUIRED-001",
+    "borrower_name": "Alice Williams",
+    "issued_date": "2024-03-10",
+    "interest_rate_percent": 4.75
+  },
+  {
+    "id": "LOAN-VALID-005",
+    "borrower_name": "Grace Hopper",
+    "loan_amount_cents": 1500000,
+    "issued_date": "2024-06-15",
+    "interest_rate_percent": 4.2,
+    "term_months": 120
+  },
+  {
+    "id": "LOAN-VALID-006",
+    "borrower_name": "Alan Turing",
+    "loan_amount_cents": 800000,
+    "issued_date": "2025-09-01",
+    "interest_rate_percent": 5.0,
+    "term_months": 84
+  },
+  {
+    "id": "LOAN-VALID-007",
+    "borrower_name": "Tim Berners-Lee",
+    "loan_amount_cents": 200000,
+    "issued_date": "2023-12-20",
+    "interest_rate_percent": 3.9,
+    "term_months": 36
+  },
+  {
+    "id": "LOAN-VALID-008",
+    "borrower_name": "Radia Perlman",
+    "loan_amount_cents": 250000,
+    "issued_date": "2024-11-05",
+    "interest_rate_percent": 4.8,
+    "term_months": 48
+  },
+  {
+    "id": "LOAN-VALID-009",
+    "borrower_name": "Linus Torvalds",
+    "loan_amount_cents": 500000,
+    "issued_date": "2025-03-15",
+    "interest_rate_percent": 5.3,
+    "term_months": 60
+  },
+  {
+    "id": "LOAN-VALID-010",
+    "borrower_name": "Margaret Hamilton",
+    "loan_amount_cents": 1200000,
+    "issued_date": "2024-08-10",
+    "interest_rate_percent": 4.5,
+    "term_months": 180
+  }
+]
