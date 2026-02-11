@@ -4,15 +4,13 @@ import {
   createMockErrorResponse
 } from '@/mocks/loan-review.mock';
 
-const API_BASE_URL = 'http://localhost:3000/api';
-
 /**
  * MSW handlers for loan API endpoints.
  * Intercept HTTP requests and return mock responses.
  */
 export const handlers = [
   // Success: Return valid loan review
-  http.get(`${API_BASE_URL}/loans/:loanId`, ({ params }) => {
+  http.get('*/loans/:loanId', ({ params }) => {
     const { loanId } = params;
 
     // Simulate specific scenarios based on loan ID

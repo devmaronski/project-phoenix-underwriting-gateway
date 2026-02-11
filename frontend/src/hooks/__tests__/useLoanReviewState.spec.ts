@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useLoanReviewState } from '@/hooks/useLoanReviewState';
 
 describe('useLoanReviewState', () => {
@@ -70,7 +70,9 @@ describe('useLoanReviewState', () => {
     });
 
     // Just verify refetch works without error
-    result.current.refetch();
+    await act(async () => {
+      result.current.refetch();
+    });
 
     // Wait for loading to complete
     await waitFor(() => {
@@ -96,7 +98,9 @@ describe('useLoanReviewState', () => {
     });
 
     // Change loanId
-    rerender({ loanId: 'loan-456' });
+    await act(async () => {
+      rerender({ loanId: 'loan-456' });
+    });
 
     await waitFor(() => {
       expect(result.current.data).not.toBeNull();
@@ -119,7 +123,9 @@ describe('useLoanReviewState', () => {
     });
 
     // Clear loanId
-    rerender({ loanId: null });
+    await act(async () => {
+      rerender({ loanId: null });
+    });
 
     expect(result.current.data).toBeNull();
     expect(result.current.error).toBeNull();
