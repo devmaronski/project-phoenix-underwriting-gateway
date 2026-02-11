@@ -1,25 +1,62 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
+import { GlobalExceptionFilter } from '../src/common/filters/global-exception.filter';
+import { RequestIdInterceptor } from '../src/common/interceptors/request-id.interceptor';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+describe('App E2E', () => {
+  let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
+    // Apply global interceptor for request ID tracking
+    app.useGlobalInterceptors(new RequestIdInterceptor());
+
+    // Apply global exception filter
+    app.useGlobalFilters(new GlobalExceptionFilter());
+
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('GET /health (E2E)', () => {
+    it('should return 200 with status ok', () => {
+      return request(app.getHttpServer())
+        .get('/health')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as Record<string, unknown>;
+          expect(body).toHaveProperty('status', 'ok');
+          expect(body).toHaveProperty('meta');
+          expect(body).toHaveProperty('meta.requestId');
+          const meta = body.meta as Record<string, unknown>;
+          expect(meta.requestId).toMatch(
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+          );
+        });
+    });
+
+    it('should include valid UUID in meta.requestId', () => {
+      return request(app.getHttpServer())
+        .get('/health')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as Record<string, unknown>;
+          const meta = body.meta as Record<string, unknown>;
+          const requestId = meta.requestId as string;
+          const uuidRegex =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          expect(requestId).toMatch(uuidRegex);
+        });
+    });
   });
 });
