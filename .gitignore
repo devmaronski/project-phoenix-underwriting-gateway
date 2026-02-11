@@ -1,7 +1,14 @@
 .plans/
 
+# Frontend
 frontend/node_modules/
 frontend/dist/
 frontend/coverage/
 frontend/.env
 frontend/.env.local
+
+# Auto-generated build artifacts (never commit these)
+frontend/src/**/*.js
+frontend/src/**/*.jsx
+frontend/src/**/*.d.ts
+frontend/*.config.d.ts
