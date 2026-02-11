@@ -1,20 +1,18 @@
 node_modules
-npm - debug.log
-    .git
-    .gitignore
+npm-debug.log
+.git
+.gitignore
 README.md
-    .env
-    .env.local
+.env
+.env.local
 coverage
 dist
-src
 jest.config.js
-tsconfig.json
-    .eslintrc.cjs
-    .prettierrc
-    .dockerignore
+.eslintrc.cjs
+.prettierrc
+.dockerignore
 test
 tests
 __tests__
-    *.test.ts
-    *.spec.ts
+*.test.ts
+*.spec.ts
