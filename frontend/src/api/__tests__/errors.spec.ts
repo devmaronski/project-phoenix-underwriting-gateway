@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { AxiosError } from 'axios';
 import { normalizeError, isRetryable } from '../errors';
-import { ErrorCode, ErrorResponse } from '@/types/api.types';
+import type { ErrorResponse } from '@/types/api.types';
 
 describe('Error Normalization', () => {
   describe('isRetryable()', () => {
@@ -17,7 +17,7 @@ describe('Error Normalization', () => {
           config: {} as any,
           headers: {},
           data: {
-            error: { code: ErrorCode.RISK_SERVICE_DOWN },
+            error: { code: 'RISK_SERVICE_DOWN' },
             meta: { requestId: 'req-1' }
           }
         } as any
@@ -37,7 +37,7 @@ describe('Error Normalization', () => {
           config: {} as any,
           headers: {},
           data: {
-            error: { code: ErrorCode.INTERNAL_SERVER_ERROR },
+            error: { code: 'INTERNAL_SERVER_ERROR' },
             meta: { requestId: 'req-1' }
           }
         } as any
@@ -52,7 +52,7 @@ describe('Error Normalization', () => {
         config: {} as any,
         headers: {},
         data: {
-          error: { code: ErrorCode.NOT_FOUND },
+          error: { code: 'NOT_FOUND' },
           meta: { requestId: 'req-1' }
         }
       } as any);
@@ -71,7 +71,7 @@ describe('Error Normalization', () => {
           config: {} as any,
           headers: {},
           data: {
-            error: { code: ErrorCode.LEGACY_DATA_CORRUPT },
+            error: { code: 'LEGACY_DATA_CORRUPT' },
             meta: { requestId: 'req-1' }
           }
         } as any
@@ -97,7 +97,7 @@ describe('Error Normalization', () => {
           headers: {},
           data: {
             error: {
-              code: ErrorCode.LEGACY_DATA_CORRUPT,
+              code: 'LEGACY_DATA_CORRUPT',
               message: 'Data validation failed'
             },
             meta: { requestId: 'req-1' }
@@ -120,7 +120,7 @@ describe('Error Normalization', () => {
           headers: {},
           data: {
             error: {
-              code: ErrorCode.VALIDATION_FAILED,
+              code: 'VALIDATION_FAILED',
               message: 'Invalid input'
             },
             meta: { requestId: 'req-1' }
@@ -145,7 +145,7 @@ describe('Error Normalization', () => {
           headers: {},
           data: {
             error: {
-              code: ErrorCode.NOT_FOUND,
+              code: 'NOT_FOUND',
               message: 'Loan ID does not exist'
             },
             meta: { requestId: 'req-404' }
@@ -155,7 +155,7 @@ describe('Error Normalization', () => {
 
       const normalized = normalizeError(error as AxiosError<ErrorResponse>);
 
-      expect(normalized.code).toBe(ErrorCode.NOT_FOUND);
+      expect(normalized.code).toBe('NOT_FOUND');
       expect(normalized.message).toContain('Loan not found');
       expect(normalized.retryable).toBe(false);
       expect(normalized.meta.requestId).toBe('req-404');
@@ -174,7 +174,7 @@ describe('Error Normalization', () => {
           headers: {},
           data: {
             error: {
-              code: ErrorCode.RISK_SERVICE_DOWN,
+              code: 'RISK_SERVICE_DOWN',
               message: 'Risk service timeout'
             },
             meta: { requestId: 'req-503' }
@@ -184,7 +184,7 @@ describe('Error Normalization', () => {
 
       const normalized = normalizeError(error as AxiosError<ErrorResponse>);
 
-      expect(normalized.code).toBe(ErrorCode.RISK_SERVICE_DOWN);
+      expect(normalized.code).toBe('RISK_SERVICE_DOWN');
       expect(normalized.message).toContain('Risk service');
       expect(normalized.retryable).toBe(true);
       expect(normalized.meta.requestId).toBe('req-503');
@@ -203,7 +203,7 @@ describe('Error Normalization', () => {
           headers: {},
           data: {
             error: {
-              code: ErrorCode.LEGACY_DATA_CORRUPT,
+              code: 'LEGACY_DATA_CORRUPT',
               message: 'Transformation validation failed'
             },
             meta: { requestId: 'req-422' }
@@ -213,7 +213,7 @@ describe('Error Normalization', () => {
 
       const normalized = normalizeError(error as AxiosError<ErrorResponse>);
 
-      expect(normalized.code).toBe(ErrorCode.LEGACY_DATA_CORRUPT);
+      expect(normalized.code).toBe('LEGACY_DATA_CORRUPT');
       expect(normalized.message).toContain('corrupted');
       expect(normalized.retryable).toBe(false);
       expect(normalized.meta.requestId).toBe('req-422');
@@ -224,7 +224,7 @@ describe('Error Normalization', () => {
 
       const normalized = normalizeError(error as AxiosError<ErrorResponse>);
 
-      expect(normalized.code).toBe(ErrorCode.NETWORK_ERROR);
+      expect(normalized.code).toBe('NETWORK_ERROR');
       expect(normalized.message).toContain('Network');
       expect(normalized.retryable).toBe(true);
       expect(normalized.meta.requestId).toBeUndefined();
@@ -235,7 +235,7 @@ describe('Error Normalization', () => {
 
       const normalized = normalizeError(error);
 
-      expect(normalized.code).toBe(ErrorCode.NETWORK_ERROR);
+      expect(normalized.code).toBe('NETWORK_ERROR');
       expect(normalized.retryable).toBe(true);
     });
 
@@ -252,7 +252,7 @@ describe('Error Normalization', () => {
           headers: {},
           data: {
             error: {
-              code: ErrorCode.NOT_FOUND,
+              code: 'NOT_FOUND',
               message: 'Loan ID ABC123 not in database'
             },
             meta: { requestId: 'req-404' }
@@ -275,7 +275,7 @@ describe('Error Normalization', () => {
         headers: {},
         data: {
           error: {
-            code: ErrorCode.AI_TIMEOUT,
+            code: 'AI_TIMEOUT',
             message: 'AI service timed out'
           },
           meta: { requestId: 'req-408' }
@@ -284,7 +284,7 @@ describe('Error Normalization', () => {
 
       const normalized = normalizeError(error as AxiosError<ErrorResponse>);
 
-      expect(normalized.code).toBe(ErrorCode.AI_TIMEOUT);
+      expect(normalized.code).toBe('AI_TIMEOUT');
       expect(normalized.message).toContain('timed out');
       expect(normalized.retryable).toBe(true);
     });

@@ -6,12 +6,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ErrorBanner } from '@/components/ErrorBanner';
-import { createMockErrorResponse } from '@/mocks/loan-review.mock';
-import { ErrorCode } from '@/types/api.types';
+import { createMockApiError } from '@/mocks/loan-review.mock';
 
 describe('ErrorBanner', () => {
   it('should display error title and message', () => {
-    const error = createMockErrorResponse(ErrorCode.NOT_FOUND);
+    const error = createMockApiError('NOT_FOUND');
     const mockRetry = vi.fn();
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
@@ -21,18 +20,22 @@ describe('ErrorBanner', () => {
   });
 
   it('should show request ID', () => {
-    const error = createMockErrorResponse(ErrorCode.AI_TIMEOUT);
+    const error = createMockApiError('AI_TIMEOUT');
     const mockRetry = vi.fn();
 
-    render(<ErrorBanner error={error} onRetry={mockRetry} />);
+    render(
+      <ErrorBanner
+        error={error}
+        requestId={error.requestId}
+        onRetry={mockRetry}
+      />
+    );
 
-    expect(
-      screen.getByText(new RegExp(error.meta.requestId))
-    ).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(error.requestId!))).toBeInTheDocument();
   });
 
   it('should show retry button for retryable errors', () => {
-    const error = createMockErrorResponse(ErrorCode.AI_TIMEOUT);
+    const error = createMockApiError('AI_TIMEOUT');
     const mockRetry = vi.fn();
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
@@ -45,7 +48,7 @@ describe('ErrorBanner', () => {
   });
 
   it('should not show retry button for non-retryable errors', () => {
-    const error = createMockErrorResponse(ErrorCode.LEGACY_DATA_CORRUPT);
+    const error = createMockApiError('LEGACY_DATA_CORRUPT');
     const mockRetry = vi.fn();
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
@@ -56,7 +59,7 @@ describe('ErrorBanner', () => {
   });
 
   it('should copy request ID to clipboard', async () => {
-    const error = createMockErrorResponse(ErrorCode.NOT_FOUND);
+    const error = createMockApiError('NOT_FOUND');
     const mockRetry = vi.fn();
 
     // Mock clipboard API
@@ -65,20 +68,24 @@ describe('ErrorBanner', () => {
     };
     Object.assign(navigator, { clipboard: mockClipboard });
 
-    render(<ErrorBanner error={error} onRetry={mockRetry} />);
+    render(
+      <ErrorBanner
+        error={error}
+        requestId={error.requestId}
+        onRetry={mockRetry}
+      />
+    );
 
     const copyButton = screen.getByRole('button', { name: /copy/i });
     fireEvent.click(copyButton);
 
     await waitFor(() => {
-      expect(mockClipboard.writeText).toHaveBeenCalledWith(
-        error.meta.requestId
-      );
+      expect(mockClipboard.writeText).toHaveBeenCalledWith(error.requestId);
     });
   });
 
   it("should show 'Copied' feedback after copying request ID", async () => {
-    const error = createMockErrorResponse(ErrorCode.NOT_FOUND);
+    const error = createMockApiError('NOT_FOUND');
     const mockRetry = vi.fn();
 
     const mockClipboard = {
@@ -97,7 +104,7 @@ describe('ErrorBanner', () => {
   });
 
   it('should handle NETWORK_ERROR correctly', () => {
-    const error = createMockErrorResponse(ErrorCode.NETWORK_ERROR);
+    const error = createMockApiError('NETWORK_ERROR');
     const mockRetry = vi.fn();
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
@@ -107,7 +114,7 @@ describe('ErrorBanner', () => {
   });
 
   it('should handle RISK_SERVICE_DOWN correctly', () => {
-    const error = createMockErrorResponse(ErrorCode.RISK_SERVICE_DOWN);
+    const error = createMockApiError('RISK_SERVICE_DOWN');
     const mockRetry = vi.fn();
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
@@ -117,7 +124,7 @@ describe('ErrorBanner', () => {
   });
 
   it('should handle VALIDATION_FAILED error', () => {
-    const error = createMockErrorResponse(ErrorCode.VALIDATION_FAILED);
+    const error = createMockApiError('VALIDATION_FAILED');
     const mockRetry = vi.fn();
 
     render(<ErrorBanner error={error} onRetry={mockRetry} />);

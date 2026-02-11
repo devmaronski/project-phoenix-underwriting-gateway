@@ -8,31 +8,29 @@ import { LoanReviewScreen } from '@/components/LoanReviewScreen';
 
 describe('LoanReviewScreen', () => {
   it('should render the header', () => {
-    render(<LoanReviewScreen />);
+    render(<LoanReviewScreen loanId={null} />);
 
-    expect(screen.getByText('Loan Review')).toBeInTheDocument();
-    expect(
-      screen.getByText('Review loan details and risk assessment')
-    ).toBeInTheDocument();
+    expect(screen.getByText(/enter a loan id/i)).toBeInTheDocument();
   });
 
   it('should render loan ID input field', () => {
-    render(<LoanReviewScreen />);
+    render(<LoanReviewScreen loanId={null} />);
 
-    const input = screen.getByPlaceholderText(/enter loan id/i);
-    expect(input).toBeInTheDocument();
+    const message = screen.getByText(/enter a loan id/i);
+    expect(message).toBeInTheDocument();
   });
 
   it('should render load button', () => {
-    render(<LoanReviewScreen />);
+    render(<LoanReviewScreen loanId={null} />);
 
-    expect(screen.getByRole('button', { name: /load/i })).toBeInTheDocument();
+    // No load button visible when no loanId provided
+    expect(
+      screen.queryByRole('button', { name: /load/i })
+    ).not.toBeInTheDocument();
   });
 
   it('should load default loan data', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="success" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     // Should show loading state initially
     expect(screen.queryAllByRole('generic', { hidden: true }).length >= 0).toBe(
@@ -46,9 +44,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display loan summary card when data loads', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="success" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     await waitFor(() => {
       expect(screen.getByText('Loan Details')).toBeInTheDocument();
@@ -56,9 +52,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display risk score card when data loads', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="success" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     await waitFor(() => {
       expect(screen.getByText('Risk Assessment')).toBeInTheDocument();
@@ -66,12 +60,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should show error banner when scenario is loanNotFound', async () => {
-    render(
-      <LoanReviewScreen
-        defaultLoanId="loan-invalid"
-        mockScenario="loanNotFound"
-      />
-    );
+    render(<LoanReviewScreen loanId="loan-invalid" />);
 
     await waitFor(() => {
       expect(screen.getByText('Loan Not Found')).toBeInTheDocument();
@@ -79,9 +68,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should allow changing loan ID via input', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="success" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     const input = screen.getByPlaceholderText(/enter loan id/i);
     const loadButton = screen.getByRole('button', { name: /load/i });
@@ -97,9 +84,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should support Enter key to load loan', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="success" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     const input = screen.getByPlaceholderText(/enter loan id/i);
 
@@ -114,9 +99,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display low risk scenario correctly', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="lowRisk" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     await waitFor(() => {
       expect(screen.getByText('Low Risk')).toBeInTheDocument();
@@ -124,9 +107,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should display high risk scenario correctly', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="highRisk" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     await waitFor(() => {
       expect(screen.getByText('High Risk')).toBeInTheDocument();
@@ -134,7 +115,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should show empty state when no loan ID provided', () => {
-    render(<LoanReviewScreen defaultLoanId="" mockScenario="success" />);
+    render(<LoanReviewScreen loanId="" />);
 
     expect(
       screen.getByText(/Enter a loan ID above to get started/i)
@@ -142,9 +123,7 @@ describe('LoanReviewScreen', () => {
   });
 
   it('should handle retry button in error state', async () => {
-    render(
-      <LoanReviewScreen defaultLoanId="loan-123" mockScenario="aiTimeout" />
-    );
+    render(<LoanReviewScreen loanId="loan-123" />);
 
     await waitFor(() => {
       expect(screen.getByText('Service Timeout')).toBeInTheDocument();

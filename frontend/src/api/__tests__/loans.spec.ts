@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from './setup';
 import { loansApi } from '../loans';
-import { ErrorCode } from '@/types/api.types';
 
 describe('Loans API Service', () => {
   describe('getReview()', () => {
@@ -22,7 +21,7 @@ describe('Loans API Service', () => {
         await loansApi.getReview('mock-not-found');
         expect.fail('Should have thrown error');
       } catch (error: any) {
-        expect(error.code).toBe(ErrorCode.NOT_FOUND);
+        expect(error.code).toBe('NOT_FOUND');
         expect(error.message).toContain('not found');
         expect(error.retryable).toBe(false);
         expect(error.meta.requestId).toBeDefined();
@@ -34,7 +33,7 @@ describe('Loans API Service', () => {
         await loansApi.getReview('mock-legacy-corrupt');
         expect.fail('Should have thrown error');
       } catch (error: any) {
-        expect(error.code).toBe(ErrorCode.LEGACY_DATA_CORRUPT);
+        expect(error.code).toBe('LEGACY_DATA_CORRUPT');
         expect(error.message).toContain('corrupted');
         expect(error.retryable).toBe(false);
       }
@@ -45,7 +44,7 @@ describe('Loans API Service', () => {
         await loansApi.getReview('mock-timeout');
         expect.fail('Should have thrown error');
       } catch (error: any) {
-        expect(error.code).toBe(ErrorCode.AI_TIMEOUT);
+        expect(error.code).toBe('AI_TIMEOUT');
         expect(error.retryable).toBe(true);
       }
     });
@@ -55,7 +54,7 @@ describe('Loans API Service', () => {
         await loansApi.getReview('mock-service-down');
         expect.fail('Should have thrown error');
       } catch (error: any) {
-        expect(error.code).toBe(ErrorCode.RISK_SERVICE_DOWN);
+        expect(error.code).toBe('RISK_SERVICE_DOWN');
         expect(error.retryable).toBe(true);
       }
     });
@@ -65,7 +64,7 @@ describe('Loans API Service', () => {
         await loansApi.getReview('mock-server-error');
         expect.fail('Should have thrown error');
       } catch (error: any) {
-        expect(error.code).toBe(ErrorCode.INTERNAL_SERVER_ERROR);
+        expect(error.code).toBe('INTERNAL_SERVER_ERROR');
         expect(error.retryable).toBe(true);
       }
     });

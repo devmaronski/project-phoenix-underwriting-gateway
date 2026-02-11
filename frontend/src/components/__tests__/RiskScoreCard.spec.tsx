@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { RiskScoreCard } from '../RiskScoreCard';
 
 describe('RiskScoreCard', () => {
@@ -52,8 +53,7 @@ describe('RiskScoreCard', () => {
   });
 
   it('should toggle disclosure panel when button clicked', async () => {
-    const { user } = await import('@testing-library/user-event');
-    const userEvent = user.setup();
+    const user = userEvent.setup();
 
     render(
       <RiskScoreCard
@@ -76,11 +76,11 @@ describe('RiskScoreCard', () => {
     expect(screen.queryByText('Limited history')).not.toBeInTheDocument();
 
     // Click to reveal
-    await userEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(screen.getByText('Limited history')).toBeInTheDocument();
 
     // Click to close
-    await userEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(screen.queryByText('Limited history')).not.toBeInTheDocument();
   });
 
@@ -95,8 +95,7 @@ describe('RiskScoreCard', () => {
   });
 
   it("should display 'Additional Factors' header when disclosing", async () => {
-    const { user } = await import('@testing-library/user-event');
-    const userEvent = user.setup();
+    const user = userEvent.setup();
 
     render(
       <RiskScoreCard
@@ -115,7 +114,7 @@ describe('RiskScoreCard', () => {
       name: /view all reasons/i
     });
 
-    await userEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(screen.getByText('Additional Factors')).toBeInTheDocument();
   });
 

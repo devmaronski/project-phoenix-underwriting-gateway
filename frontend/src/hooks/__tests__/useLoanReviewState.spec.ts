@@ -6,7 +6,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useLoanReviewState } from '@/hooks/useLoanReviewState';
-import { ErrorCode } from '@/types/api.types';
 
 describe('useLoanReviewState', () => {
   it('should initialize with null data and loading false', () => {
@@ -54,7 +53,7 @@ describe('useLoanReviewState', () => {
 
     expect(result.current.data).toBeNull();
     expect(result.current.error).not.toBeNull();
-    expect(result.current.error?.error.code).toBe(ErrorCode.NOT_FOUND);
+    expect(result.current.error?.error.code).toBe('NOT_FOUND');
   });
 
   it('should refetch on demand', async () => {
