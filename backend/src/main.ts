@@ -2,12 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { RequestIdInterceptor } from './common/interceptors/request-id.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Apply global interceptor for request ID tracking
-  app.useGlobalInterceptors(new RequestIdInterceptor());
+  // Apply global interceptors
+  app.useGlobalInterceptors(
+    new RequestIdInterceptor(),
+    new ResponseInterceptor(),
+  );
 
   // Apply global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());

@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { GlobalExceptionFilter } from '../src/common/filters/global-exception.filter';
 import { RequestIdInterceptor } from '../src/common/interceptors/request-id.interceptor';
+import { Server } from 'http';
 
 describe('App E2E', () => {
   let app: INestApplication;
@@ -30,7 +31,7 @@ describe('App E2E', () => {
 
   describe('GET /health (E2E)', () => {
     it('should return 200 with status ok', () => {
-      return request(app.getHttpServer())
+      return request(app.getHttpServer() as Server)
         .get('/health')
         .expect(200)
         .expect((res) => {
@@ -46,7 +47,7 @@ describe('App E2E', () => {
     });
 
     it('should include valid UUID in meta.requestId', () => {
-      return request(app.getHttpServer())
+      return request(app.getHttpServer() as Server)
         .get('/health')
         .expect(200)
         .expect((res) => {
