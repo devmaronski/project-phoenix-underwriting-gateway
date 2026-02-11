@@ -4,6 +4,8 @@ import { InMemoryLegacyRepository } from './legacy/in-memory-legacy.repository';
 import { MockRiskClient } from '../risk/mock-risk-client';
 import { LegacyLoan } from './legacy/loan.types';
 import { AppError } from '../common/errors/app-error';
+import type { IRiskClient } from '../risk/risk-client';
+import type { RiskResponse } from '../risk/risk.types';
 
 describe('LoansService', () => {
   let service: LoansService;
@@ -100,6 +102,27 @@ describe('LoansService', () => {
 
       try {
         await failureService.getLoan('loan-1');
+        fail('Should have thrown');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('AI_UNAVAILABLE');
+      }
+    });
+
+    it('should map unknown risk client errors to AI_UNAVAILABLE', async () => {
+      class FailingRiskClient implements IRiskClient {
+        scoreRisk(): Promise<RiskResponse> {
+          return Promise.reject(new Error('Unexpected failure'));
+        }
+      }
+
+      const failingService = new LoansService(
+        legacyRepo,
+        new FailingRiskClient(),
+      );
+
+      try {
+        await failingService.getLoan('loan-1');
         fail('Should have thrown');
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);

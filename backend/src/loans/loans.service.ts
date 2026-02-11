@@ -39,7 +39,17 @@ export class LoansService {
     const sanitizedLoan = transformLoan(legacyLoan);
 
     // Step 3: Get risk score (may throw AI_TIMEOUT or AI_UNAVAILABLE)
-    const riskScore = await this.riskClient.scoreRisk(sanitizedLoan);
+    const riskScore = await this.riskClient
+      .scoreRisk(sanitizedLoan)
+      .catch((error: unknown) => {
+        if (error instanceof AppError) {
+          throw error;
+        }
+        throw new AppError(
+          'AI_UNAVAILABLE',
+          'Risk scoring service is unavailable',
+        );
+      });
 
     return {
       loan: sanitizedLoan,
