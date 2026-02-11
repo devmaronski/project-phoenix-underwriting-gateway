@@ -6,13 +6,13 @@
  * to real API calls, so the component interface remains stable.
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from 'react';
 import {
   LoanReviewResponse,
   ErrorResponse,
-  LoanReviewState,
-} from "@/types/api.types";
-import { MOCK_SCENARIOS } from "@/mocks/loan-review.mock";
+  LoanReviewState
+} from '@/types/api.types';
+import { MOCK_SCENARIOS } from '@/mocks/loan-review.mock';
 
 export interface UseLoanReviewOptions {
   loanId: string | null;
@@ -38,9 +38,9 @@ export function useLoanReviewState(
 ): LoanReviewState {
   const {
     loanId,
-    mockScenario = "success",
+    mockScenario = 'success',
     simulateDelay = 800,
-    simulateError = false,
+    simulateError = false
   } = options;
 
   const [data, setData] = useState<LoanReviewResponse | null>(null);
@@ -67,15 +67,14 @@ export function useLoanReviewState(
         setData(null);
       } else {
         // Fetch mock data based on scenario
-        const scenarioFn =
-          MOCK_SCENARIOS[
-            mockScenario as keyof typeof MOCK_SCENARIOS
-          ] as unknown as () => LoanReviewResponse | ErrorResponse;
+        const scenarioFn = MOCK_SCENARIOS[
+          mockScenario as keyof typeof MOCK_SCENARIOS
+        ] as unknown as () => LoanReviewResponse | ErrorResponse;
 
         const result = scenarioFn();
 
         // Check if result is error or success
-        if ("error" in result) {
+        if ('error' in result) {
           setError(result as ErrorResponse);
           setData(null);
         } else {
@@ -99,6 +98,6 @@ export function useLoanReviewState(
     data,
     error,
     isLoading,
-    refetch,
+    refetch
   };
 }

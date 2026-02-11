@@ -2,7 +2,7 @@
  * DisclosurePanel: Expandable list of all risk reasons.
  */
 
-import { Badge } from "./ui/badge";
+import { Badge } from './ui/badge';
 
 export interface DisclosurePanelProps {
   allReasons: string[];
@@ -11,7 +11,7 @@ export interface DisclosurePanelProps {
 
 export function DisclosurePanel({
   allReasons,
-  topReasons,
+  topReasons
 }: DisclosurePanelProps) {
   // Reasons that aren't in the top 3
   const additionalReasons = allReasons.filter(

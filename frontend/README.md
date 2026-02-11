@@ -13,26 +13,31 @@ This is the **Phase 1: UI Skeleton** implementation of the Project Phoenix Loan 
 ## Stack & Tech Choices
 
 ### React 18 + Vite
+
 - **Why**: Fast, modern dev experience with optimized build output
 - **HMR**: Instant feedback during development
 - **Build**: Lightning-fast production builds (<100ms)
 
 ### TypeScript (Strict Mode)
+
 - **Why**: Catch errors at build time, not runtime
 - **Config**: `noImplicitAny`, `strictNullChecks`, `noUnusedLocals` enabled
 - **Zero `any` types**: Every value is explicitly typed
 
 ### Tailwind CSS + PostCSS
+
 - **Why**: Utility-first, production-ready styling without custom CSS
 - **No CSS-in-JS**: Faster builds, smaller bundle
 - **Responsive**: Mobile-first design out of the box
 
 ### shadcn/ui
+
 - **Why**: Copy-paste, headless components (Radix primitives)
 - **Zero dependencies**: No component library lock-in
 - **Customizable**: Tailwind-based, easy to override
 
 ### Vitest + React Testing Library
+
 - **Why**: Fast unit/integration tests, behavior-driven
 - **No implementation details**: Test what users see and interact with
 - **Target**: 70%+ code coverage
@@ -101,6 +106,7 @@ frontend/src/
 ## Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 
@@ -181,7 +187,12 @@ Every component has explicit TypeScript interfaces:
 ```typescript
 export interface LoanReviewScreenProps {
   defaultLoanId?: string;
-  mockScenario?: "success" | "lowRisk" | "highRisk" | "loanNotFound" | "aiTimeout";
+  mockScenario?:
+    | 'success'
+    | 'lowRisk'
+    | 'highRisk'
+    | 'loanNotFound'
+    | 'aiTimeout';
 }
 
 export function LoanReviewScreen(props: LoanReviewScreenProps) {
@@ -196,6 +207,7 @@ export function LoanReviewScreen(props: LoanReviewScreenProps) {
 ### Test Coverage Target: 70%+
 
 **Phase 1 covers:**
+
 - Hook tests (useLoanReviewState, useDisclosure)
 - Utility tests (error mapping, formatting)
 - Component tests (all UI components)
@@ -235,8 +247,8 @@ export const MOCK_SCENARIOS = {
 
 ```typescript
 // In development/testing:
-<LoanReviewScreen 
-  defaultLoanId="loan-123" 
+<LoanReviewScreen
+  defaultLoanId="loan-123"
   mockScenario="highRisk"  // See high-risk loan
 />
 ```
@@ -249,14 +261,14 @@ export const MOCK_SCENARIOS = {
 
 All errors map to user-friendly messages with request IDs for debugging.
 
-| Code | Retry? |
-|------|--------|
-| NOT_FOUND | ❌ No |
-| VALIDATION_FAILED | ❌ No |
-| LEGACY_DATA_CORRUPT | ❌ No |
-| AI_TIMEOUT | ✅ Yes |
-| RISK_SERVICE_DOWN | ✅ Yes |
-| NETWORK_ERROR | ✅ Yes |
+| Code                | Retry? |
+| ------------------- | ------ |
+| NOT_FOUND           | ❌ No  |
+| VALIDATION_FAILED   | ❌ No  |
+| LEGACY_DATA_CORRUPT | ❌ No  |
+| AI_TIMEOUT          | ✅ Yes |
+| RISK_SERVICE_DOWN   | ✅ Yes |
+| NETWORK_ERROR       | ✅ Yes |
 
 ### Request ID for Debugging
 
@@ -266,11 +278,11 @@ Every error includes a UUID `requestId` that users can copy and share with suppo
 
 ## Risk Score Colors
 
-| Score | Level | Color |
-|-------|-------|-------|
-| 0–39 | Low Risk | Green |
-| 40–69 | Medium Risk | Yellow |
-| 70–100 | High Risk | Red |
+| Score  | Level       | Color  |
+| ------ | ----------- | ------ |
+| 0–39   | Low Risk    | Green  |
+| 40–69  | Medium Risk | Yellow |
+| 70–100 | High Risk   | Red    |
 
 ---
 
@@ -291,36 +303,41 @@ See `.env.example` for available variables.
 ✅ **Zero `any` types** – Every value is explicitly typed  
 ✅ **Strict null checks** – `null` and `undefined` caught at build time  
 ✅ **No unused variables** – `noUnusedLocals` enabled  
-✅ **Runtime validation** – Zod schemas validate API responses  
+✅ **Runtime validation** – Zod schemas validate API responses
 
 ---
 
 ## Best Practices Applied
 
 ### Component Design
+
 - ✅ Single responsibility per component
 - ✅ Explicit prop interfaces
 - ✅ No prop drilling (composition over context)
 - ✅ Reusable utility components
 
 ### State Management
+
 - ✅ Local state for simple UI state (`useDisclosure`)
 - ✅ Mocked hook for data fetching (Phase 1)
 - ✅ Ready for TanStack Query (Phase 2)
 
 ### Error Handling
+
 - ✅ All error paths tested
 - ✅ User-friendly messages
 - ✅ Request ID for debugging
 - ✅ Retry logic for transient errors
 
 ### Testing
+
 - ✅ Unit tests (hooks, utilities)
 - ✅ Integration tests (components)
 - ✅ No implementation detail testing
 - ✅ 70%+ code coverage
 
 ### Code Quality
+
 - ✅ ESLint + Prettier for consistency
 - ✅ Type safety throughout
 - ✅ Clear variable naming
@@ -356,6 +373,7 @@ Phase 2 replaces the mock `useLoanReviewState` hook with production-ready API in
 #### 1. HTTP Client (`api/client.ts`)
 
 Axios instance with:
+
 - Base URL from environment variable (`VITE_API_URL`)
 - 30-second timeout for slow backend operations
 - Request/response interceptors for error handling
@@ -377,6 +395,7 @@ interface FrontendError {
 ```
 
 **Smart Retry Logic:**
+
 - ✅ Auto-retry: 503, 500, network errors (transient failures)
 - ❌ No retry: 404, 422, 400 (user/validation errors)
 - Exponential backoff: 1s, 2s, 4s (capped at 30s)
@@ -402,6 +421,7 @@ const { data, error, isLoading, refetch } = useLoanReview(loanId);
 ```
 
 **Features:**
+
 - Query key caching: Different loan IDs cached separately
 - Stale-while-revalidate: 5-minute stale time
 - Garbage collection: 10-minute cache retention
@@ -420,15 +440,15 @@ VITE_API_URL=http://localhost:3000/api
 
 ### Error Code Mapping
 
-| Backend Error | HTTP Status | User Message | Retryable |
-|--------------|-------------|--------------|-----------|
-| NOT_FOUND | 404 | "Loan not found. Please check the loan ID and try again." | ❌ No |
-| VALIDATION_FAILED | 400 | "Invalid request. Please check your input." | ❌ No |
-| LEGACY_DATA_CORRUPT | 422 | "Loan data is unavailable or corrupted. Please contact support with the request ID below." | ❌ No |
-| AI_TIMEOUT | 408/503 | "Request timed out. The risk service is taking too long. Please retry." | ✅ Yes |
-| RISK_SERVICE_DOWN | 503 | "Risk service is currently unavailable. Please retry in a moment." | ✅ Yes |
-| INTERNAL_SERVER_ERROR | 500 | "Internal server error. Our team has been notified. Please retry." | ✅ Yes |
-| NETWORK_ERROR | (no response) | "Network connection error. Please check your internet and retry." | ✅ Yes |
+| Backend Error         | HTTP Status   | User Message                                                                               | Retryable |
+| --------------------- | ------------- | ------------------------------------------------------------------------------------------ | --------- |
+| NOT_FOUND             | 404           | "Loan not found. Please check the loan ID and try again."                                  | ❌ No     |
+| VALIDATION_FAILED     | 400           | "Invalid request. Please check your input."                                                | ❌ No     |
+| LEGACY_DATA_CORRUPT   | 422           | "Loan data is unavailable or corrupted. Please contact support with the request ID below." | ❌ No     |
+| AI_TIMEOUT            | 408/503       | "Request timed out. The risk service is taking too long. Please retry."                    | ✅ Yes    |
+| RISK_SERVICE_DOWN     | 503           | "Risk service is currently unavailable. Please retry in a moment."                         | ✅ Yes    |
+| INTERNAL_SERVER_ERROR | 500           | "Internal server error. Our team has been notified. Please retry."                         | ✅ Yes    |
+| NETWORK_ERROR         | (no response) | "Network connection error. Please check your internet and retry."                          | ✅ Yes    |
 
 ### Testing with MSW
 
@@ -438,6 +458,7 @@ Phase 2 uses Mock Service Worker for realistic HTTP testing:
 **Handlers:** `api/__tests__/mocks/handlers.ts` intercepts API requests
 
 **Special Loan IDs for Testing:**
+
 - `mock-not-found` → 404 NOT_FOUND
 - `mock-legacy-corrupt` → 422 LEGACY_DATA_CORRUPT
 - `mock-timeout` → 503 AI_TIMEOUT
@@ -497,6 +518,7 @@ Every API response includes `meta.requestId` for debugging:
 ```
 
 Request IDs are:
+
 - Extracted from responses/errors
 - Displayed in error UI
 - Available for copying to clipboard
@@ -510,11 +532,13 @@ Request IDs are:
 ✅ **Type definitions reused**
 
 Components simply switch from:
+
 ```typescript
 const { data, error, isLoading, refetch } = useLoanReviewState({ loanId });
 ```
 
 To:
+
 ```typescript
 const { data, error, isLoading, refetch } = useLoanReview(loanId);
 ```
@@ -531,6 +555,7 @@ const { data, error, isLoading, refetch } = useLoanReview(loanId);
 - [React Testing Library](https://testing-library.com/react)
 
 ## Tech Stack
+
 - React + Vite + TypeScript
 - Tailwind CSS
 - shadcn/ui (base `Button`)

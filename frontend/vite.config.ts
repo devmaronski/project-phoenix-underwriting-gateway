@@ -1,9 +1,9 @@
-import path from "path";
-import tailwindcss from "@tailwindcss/vite";
-import tailwindPostcss from "@tailwindcss/postcss";
-import autoprefixer from "autoprefixer";
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import path from 'path';
+import tailwindcss from '@tailwindcss/vite';
+import tailwindPostcss from '@tailwindcss/postcss';
+import autoprefixer from 'autoprefixer';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -14,7 +14,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
+      '@': path.resolve(__dirname, './src')
     }
   }
 });

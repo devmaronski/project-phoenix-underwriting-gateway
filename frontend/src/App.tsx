@@ -18,9 +18,9 @@ const queryClient = new QueryClient({
         }
         return failureCount < 3;
       },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    },
-  },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+    }
+  }
 });
 
 function App() {
@@ -36,10 +36,13 @@ function App() {
             </h1>
           </div>
         </header>
-        
+
         <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="mb-6">
-            <label htmlFor="loan-id" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="loan-id"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Loan ID
             </label>
             <input
@@ -51,11 +54,11 @@ function App() {
               placeholder="Enter loan ID"
             />
           </div>
-          
+
           <LoanReviewScreen loanId={loanId} />
         </main>
       </div>
-      
+
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );

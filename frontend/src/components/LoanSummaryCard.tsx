@@ -2,13 +2,9 @@
  * LoanSummaryCard: Displays loan information.
  */
 
-import { Loan } from "@/types/api.types";
-import {
-  formatCurrency,
-  formatDate,
-  formatPercent,
-} from "@/utils/format";
-import { Card } from "./ui/card";
+import { Loan } from '@/types/api.types';
+import { formatCurrency, formatDate, formatPercent } from '@/utils/format';
+import { Card } from './ui/card';
 
 export interface LoanSummaryCardProps {
   loan: Loan;

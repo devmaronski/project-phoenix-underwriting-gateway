@@ -9,9 +9,11 @@ export const loansApi = {
    * @throws ApiError when request fails
    */
   async getReview(loanId: string): Promise<LoanReviewResponse> {
-    const response = await apiClient.get<LoanReviewResponse>(`/loans/${loanId}`);
+    const response = await apiClient.get<LoanReviewResponse>(
+      `/loans/${encodeURIComponent(loanId)}`
+    );
     return response.data;
-  },
+  }
 };
 
 export default loansApi;

@@ -1,4 +1,4 @@
-import { useLoanReview } from '../hooks/useLoanReview';
+import { useLoanReview } from '@/hooks/useLoanReview';
 import { ErrorBanner } from './ErrorBanner';
 import { LoadingState } from './LoadingState';
 import { LoanSummaryCard } from './LoanSummaryCard';
@@ -26,7 +26,12 @@ export function LoanReviewScreen({ loanId }: LoanReviewScreenProps) {
   if (isError || !data) {
     return (
       <ErrorBanner
-        error={error || { code: 'UNKNOWN_ERROR', message: 'An unexpected error occurred' }}
+        error={
+          error || {
+            code: 'UNKNOWN_ERROR',
+            message: 'An unexpected error occurred'
+          }
+        }
         requestId={error?.requestId}
         onRetry={refetch}
       />
@@ -41,7 +46,7 @@ export function LoanReviewScreen({ loanId }: LoanReviewScreenProps) {
         topReasons={data.risk.topReasons}
         allReasons={data.risk.allReasons}
       />
-      
+
       {data.meta?.requestId && (
         <div className="text-xs text-gray-400 text-right">
           Request ID: {data.meta.requestId}

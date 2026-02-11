@@ -1,10 +1,10 @@
-import { getRiskLevel, getRiskColorClass } from "../types/api.types";
-import { useDisclosure } from "../hooks/useDisclosure";
-import { Card } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { DisclosurePanel } from "./DisclosurePanel";
-import { ChevronDown } from "lucide-react";
+import { getRiskLevel, getRiskColorClass } from '../types/api.types';
+import { useDisclosure } from '../hooks/useDisclosure';
+import { Card } from './ui/card';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { DisclosurePanel } from './DisclosurePanel';
+import { ChevronDown } from 'lucide-react';
 
 export interface RiskScoreCardProps {
   score: number;
@@ -12,15 +12,19 @@ export interface RiskScoreCardProps {
   allReasons?: string[];
 }
 
-export function RiskScoreCard({ score, topReasons, allReasons }: RiskScoreCardProps) {
+export function RiskScoreCard({
+  score,
+  topReasons,
+  allReasons
+}: RiskScoreCardProps) {
   const riskLevel = getRiskLevel(score);
   const riskColorClass = getRiskColorClass(riskLevel);
   const { isOpen, toggle } = useDisclosure();
 
   const scoreLabel = {
-    low: "Low Risk",
-    medium: "Medium Risk",
-    high: "High Risk",
+    low: 'Low Risk',
+    medium: 'Medium Risk',
+    high: 'High Risk'
   }[riskLevel];
 
   return (
@@ -64,10 +68,10 @@ export function RiskScoreCard({ score, topReasons, allReasons }: RiskScoreCardPr
               onClick={toggle}
               className="mt-2 flex items-center gap-2"
             >
-              {isOpen ? "Hide" : "View"} All Reasons
+              {isOpen ? 'Hide' : 'View'} All Reasons
               <ChevronDown
                 className={`h-4 w-4 transition-transform ${
-                  isOpen ? "rotate-180" : ""
+                  isOpen ? 'rotate-180' : ''
                 }`}
               />
             </Button>

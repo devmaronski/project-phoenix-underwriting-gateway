@@ -3,7 +3,7 @@
  * Used by DisclosurePanel and other expandable components.
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
 export interface DisclosureState {
   isOpen: boolean;
@@ -46,6 +46,6 @@ export function useDisclosure(initialOpen = false): DisclosureState {
     isOpen,
     toggle,
     open,
-    close,
+    close
   };
 }

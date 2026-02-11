@@ -7,7 +7,9 @@ import { FrontendError } from './errors';
  * @param response - LoanReviewResponse from backend
  * @returns UUID request ID for debugging
  */
-export function extractRequestIdFromResponse(response: LoanReviewResponse): string | undefined {
+export function extractRequestIdFromResponse(
+  response: LoanReviewResponse
+): string | undefined {
   return response.meta?.requestId;
 }
 
@@ -17,7 +19,9 @@ export function extractRequestIdFromResponse(response: LoanReviewResponse): stri
  * @param error - FrontendError thrown by API layer
  * @returns UUID request ID for debugging, undefined if not available
  */
-export function extractRequestIdFromError(error: FrontendError): string | undefined {
+export function extractRequestIdFromError(
+  error: FrontendError
+): string | undefined {
   return error.meta?.requestId;
 }
 
@@ -27,6 +31,8 @@ export function extractRequestIdFromError(error: FrontendError): string | undefi
  * @param requestId - UUID request ID
  * @returns Formatted string "Request ID: <uuid>" or empty string if no ID
  */
-export function formatRequestIdForDisplay(requestId: string | undefined): string {
+export function formatRequestIdForDisplay(
+  requestId: string | undefined
+): string {
   return requestId ? `Request ID: ${requestId}` : '';
 }
