@@ -1,10 +1,11 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import App from "./App";
 
 describe("App", () => {
-  it("renders the phase 0 message", () => {
+  it("renders the loan review screen", async () => {
     render(<App />);
-    expect(screen.getByText("Phase 0 setup is complete.")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Loan Review")).toBeInTheDocument();
+    });
   });
 });
