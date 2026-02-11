@@ -131,6 +131,11 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ env.REGISTRY }} --quiet
 
+      - name: Debug VITE_API_URL
+        run: |
+          echo "VITE_API_URL=${{ env.VITE_API_URL }}"
+          test -n "${{ env.VITE_API_URL }}"
+
       - name: Build Docker image
         working-directory: frontend
         run: |
@@ -138,8 +143,8 @@ jobs:
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
 
-          docker build \
-            --build-arg VITE_API_URL="${{ env.VITE_API_URL }}" \
+          docker build --no-cache \
+            --build-arg VITE_API_URL=${{ env.VITE_API_URL }} \
             -t "${IMAGE}:${{ github.sha }}" \
             -t "${IMAGE}:latest" \
             .
