@@ -1,22 +1,6 @@
 import { z } from 'zod';
 
 /**
- * LoanSanitized - Normalized and validated loan data
- * Represents loan data after transformation from legacy format
- * - cents converted to decimal dollars
- * - dates normalized to UTC ISO8601 format
- * - all required fields present and valid
- */
-export interface LoanSanitized {
-  id: string;
-  borrower_name: string;
-  loan_amount_dollars: number; // decimal, not cents
-  issued_date: string; // ISO8601 format, UTC
-  interest_rate_percent: number;
-  term_months: number;
-}
-
-/**
  * ISO8601 date regex pattern (YYYY-MM-DD)
  */
 const ISO8601_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -65,3 +49,21 @@ export const LegacyLoanSchema = z.object({
   interest_rate_percent: z.number({ required_error: 'missing required field' }),
   term_months: z.number({ required_error: 'missing required field' }),
 });
+
+export const LoanSanitizedSchema = z.object({
+  id: z.string(),
+  borrower_name: z.string(),
+  loan_amount_dollars: z.number().nonnegative(),
+  issued_date: z.string().datetime(),
+  interest_rate_percent: z.number(),
+  term_months: z.number(),
+});
+
+/**
+ * LoanSanitized - Normalized and validated loan data
+ * Represents loan data after transformation from legacy format
+ * - cents converted to decimal dollars
+ * - dates normalized to UTC ISO8601 format
+ * - all required fields present and valid
+ */
+export type LoanSanitized = z.infer<typeof LoanSanitizedSchema>;

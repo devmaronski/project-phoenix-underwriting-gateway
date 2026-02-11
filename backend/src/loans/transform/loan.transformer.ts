@@ -1,12 +1,13 @@
 import { LegacyLoan } from '../legacy/loan.types';
-import { LegacyLoanSchema, LoanSanitized } from './loan.schema';
+import {
+  LegacyLoanSchema,
+  LoanSanitized,
+  LoanSanitizedSchema,
+} from './loan.schema';
 import { AppError } from '../../common/errors/app-error';
 import { ZodError } from 'zod';
 
-const mapZodErrorToAppError = (
-  raw: LegacyLoan,
-  error: ZodError,
-): AppError => {
+const mapZodErrorToAppError = (raw: LegacyLoan, error: ZodError): AppError => {
   const issue = error.issues[0];
   const field = issue?.path?.[0];
 
@@ -83,7 +84,7 @@ export function transformLoan(raw: LegacyLoan): LoanSanitized {
     parsed.data.issued_date + 'T00:00:00Z',
   ).toISOString();
 
-  return {
+  const sanitized: LoanSanitized = {
     id: parsed.data.id,
     borrower_name: parsed.data.borrower_name,
     loan_amount_dollars: loanAmountDollars,
@@ -91,4 +92,15 @@ export function transformLoan(raw: LegacyLoan): LoanSanitized {
     interest_rate_percent: parsed.data.interest_rate_percent,
     term_months: parsed.data.term_months,
   };
+
+  const normalized = LoanSanitizedSchema.safeParse(sanitized);
+  if (!normalized.success) {
+    throw new AppError(
+      'VALIDATION_FAILED',
+      'Sanitized loan failed validation',
+      { issues: normalized.error.issues },
+    );
+  }
+
+  return normalized.data;
 }
