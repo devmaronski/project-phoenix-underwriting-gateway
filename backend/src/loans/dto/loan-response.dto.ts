@@ -1,15 +1,10 @@
-import type { RiskDto } from '../../risk/dto/risk.dto';
+import { z } from 'zod';
+import { LoanSanitizedSchema } from '../transform/loan.schema';
+import { RiskResponseSchema } from '../../risk/dto/risk.dto';
 
-export interface LoanDto {
-  id: string;
-  borrower_name: string;
-  loan_amount_dollars: number;
-  issued_date: string;
-  interest_rate_percent: number;
-  term_months: number;
-}
+export const LoanResponseSchema = z.object({
+  loan: LoanSanitizedSchema,
+  risk: RiskResponseSchema,
+});
 
-export interface LoanResponseDto {
-  loan: LoanDto;
-  risk: RiskDto;
-}
+export type LoanResponseDto = z.infer<typeof LoanResponseSchema>;
