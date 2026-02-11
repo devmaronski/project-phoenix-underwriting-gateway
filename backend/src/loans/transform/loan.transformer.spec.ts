@@ -97,6 +97,27 @@ describe('LoanTransformer', () => {
       }
     });
 
+    it('should reject non-numeric cents with LEGACY_DATA_CORRUPT', () => {
+      const raw = {
+        id: 'LOAN-005B',
+        borrower_name: 'Charlie Brown',
+        loan_amount_cents: '25000' as unknown as number,
+        issued_date: '2024-05-20',
+        interest_rate_percent: 5.25,
+        term_months: 72,
+      } as LegacyLoan;
+
+      expect(() => transformLoan(raw)).toThrow(AppError);
+
+      try {
+        transformLoan(raw);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('LEGACY_DATA_CORRUPT');
+        expect((error as AppError).details?.field).toBe('loan_amount_cents');
+      }
+    });
+
     it('should reject invalid date format with LEGACY_DATA_CORRUPT', () => {
       const raw: LegacyLoan = {
         id: 'LOAN-006',
