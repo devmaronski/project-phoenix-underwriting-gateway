@@ -279,7 +279,7 @@ Every error includes a UUID `requestId` that users can copy and share with suppo
 Create a `.env.local` file (Phase 2):
 
 ```env
-VITE_API_BASE_URL=http://localhost:3000/api
+VITE_API_URL=http://localhost:3000/api
 ```
 
 See `.env.example` for available variables.
@@ -356,7 +356,7 @@ Phase 2 replaces the mock `useLoanReviewState` hook with production-ready API in
 #### 1. HTTP Client (`api/client.ts`)
 
 Axios instance with:
-- Base URL from environment variable (`VITE_API_BASE_URL`)
+- Base URL from environment variable (`VITE_API_URL`)
 - 30-second timeout for slow backend operations
 - Request/response interceptors for error handling
 
@@ -413,7 +413,7 @@ const { data, error, isLoading, refetch } = useLoanReview(loanId);
 Set the API base URL in `.env.local`:
 
 ```env
-VITE_API_BASE_URL=http://localhost:3000/api
+VITE_API_URL=http://localhost:3000/api
 ```
 
 **Default:** `http://localhost:3000/api`
