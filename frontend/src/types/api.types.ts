@@ -95,7 +95,7 @@ export interface ErrorResponse {
 
 export const ErrorResponseSchema = z.object({
   error: z.object({
-    code: ErrorCodeSchema,
+    code: z.string(),
     message: z.string(),
     details: z.record(z.string(), z.unknown()).optional()
   }),

@@ -36,8 +36,8 @@ export function isRetryable(error: AxiosError<ErrorResponse>): boolean {
 
   // Validation errors: never retry
   if (
-    backendCode === ErrorCode.LEGACY_DATA_CORRUPT ||
-    backendCode === ErrorCode.VALIDATION_FAILED
+    backendCode === 'LEGACY_DATA_CORRUPT' ||
+    backendCode === 'VALIDATION_FAILED'
   ) {
     return false;
   }
@@ -69,62 +69,62 @@ export function normalizeError(
     { code: ErrorCode | string; message: string }
   > = {
     400: {
-      code: ErrorCode.VALIDATION_FAILED,
+      code: 'VALIDATION_FAILED',
       message: 'Invalid request. Please check your input.'
     },
     404: {
-      code: ErrorCode.NOT_FOUND,
+      code: 'NOT_FOUND',
       message: 'Loan not found. Please check the loan ID and try again.'
     },
     422: {
-      code: ErrorCode.LEGACY_DATA_CORRUPT,
+      code: 'LEGACY_DATA_CORRUPT',
       message:
         'Loan data is unavailable or corrupted. Please contact support with the request ID below.'
     },
     408: {
-      code: ErrorCode.AI_TIMEOUT,
+      code: 'AI_TIMEOUT',
       message:
         'Request timed out. The risk service is taking too long. Please retry.'
     },
     503: {
-      code: ErrorCode.RISK_SERVICE_DOWN,
+      code: 'RISK_SERVICE_DOWN',
       message:
         'Risk service is currently unavailable. Please retry in a moment.'
     },
     500: {
-      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      code: 'INTERNAL_SERVER_ERROR',
       message:
         'Internal server error. Our team has been notified. Please retry.'
     },
-    [ErrorCode.NOT_FOUND]: {
-      code: ErrorCode.NOT_FOUND,
+    NOT_FOUND: {
+      code: 'NOT_FOUND',
       message: 'Loan not found. Please check the loan ID and try again.'
     },
-    [ErrorCode.VALIDATION_FAILED]: {
-      code: ErrorCode.VALIDATION_FAILED,
+    VALIDATION_FAILED: {
+      code: 'VALIDATION_FAILED',
       message: 'Invalid request. Please check your input.'
     },
-    [ErrorCode.LEGACY_DATA_CORRUPT]: {
-      code: ErrorCode.LEGACY_DATA_CORRUPT,
+    LEGACY_DATA_CORRUPT: {
+      code: 'LEGACY_DATA_CORRUPT',
       message:
         'Loan data is unavailable or corrupted. Please contact support with the request ID below.'
     },
-    [ErrorCode.AI_TIMEOUT]: {
-      code: ErrorCode.AI_TIMEOUT,
+    AI_TIMEOUT: {
+      code: 'AI_TIMEOUT',
       message: 'Risk service timed out. Please retry in a moment.'
     },
-    [ErrorCode.RISK_SERVICE_DOWN]: {
-      code: ErrorCode.RISK_SERVICE_DOWN,
+    RISK_SERVICE_DOWN: {
+      code: 'RISK_SERVICE_DOWN',
       message:
         'Risk service is currently unavailable. Please retry in a moment.'
     },
-    [ErrorCode.INTERNAL_SERVER_ERROR]: {
-      code: ErrorCode.INTERNAL_SERVER_ERROR,
+    INTERNAL_SERVER_ERROR: {
+      code: 'INTERNAL_SERVER_ERROR',
       message:
         'Internal server error. Our team has been notified. Please retry.'
     },
-    [ErrorCode.NETWORK_ERROR]: {
-      code: ErrorCode.NETWORK_ERROR,
+    NETWORK_ERROR: {
+      code: 'NETWORK_ERROR',
       message: 'Network connection error. Please check your internet and retry.'
     }
   };
@@ -169,7 +169,7 @@ export function normalizeError(
 
   // Network error (no response at all)
   return {
-    code: ErrorCode.NETWORK_ERROR,
+    code: 'NETWORK_ERROR',
     message: 'Network connection error. Please check your internet and retry.',
     retryable: true,
     meta: {

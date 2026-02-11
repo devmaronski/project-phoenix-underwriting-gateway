@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { ErrorCode } from '../types/api.types';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -43,7 +42,7 @@ apiClient.interceptors.response.use(
       apiError.requestId = data?.meta?.requestId;
     } else if (error.request) {
       // Request made but no response
-      apiError.code = ErrorCode.NETWORK_ERROR;
+      apiError.code = 'NETWORK_ERROR';
       apiError.message = 'Network error. Please check your connection.';
     } else {
       // Something else happened
@@ -55,10 +54,10 @@ apiClient.interceptors.response.use(
 );
 
 function mapStatusToCode(status: number): string {
-  if (status === 404) return ErrorCode.NOT_FOUND;
-  if (status === 422) return ErrorCode.VALIDATION_FAILED;
-  if (status === 503) return ErrorCode.AI_TIMEOUT;
-  if (status >= 500) return ErrorCode.INTERNAL_SERVER_ERROR;
+  if (status === 404) return 'NOT_FOUND';
+  if (status === 422) return 'VALIDATION_FAILED';
+  if (status === 503) return 'AI_TIMEOUT';
+  if (status >= 500) return 'INTERNAL_SERVER_ERROR';
   return 'UNKNOWN_ERROR';
 }
 
