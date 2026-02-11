@@ -28,7 +28,7 @@ describe('RequestIdInterceptor', () => {
     );
   });
 
-  it('should add meta.requestId to response body', (done) => {
+  it('should not mutate response body', (done) => {
     const mockRequest = {} as Record<string, unknown>;
     const mockContext = {
       switchToHttp: () => ({
@@ -41,17 +41,8 @@ describe('RequestIdInterceptor', () => {
     } as CallHandler;
 
     interceptor.intercept(mockContext, mockHandler).subscribe((result) => {
-      expect(result).toHaveProperty('meta');
-      expect((result as Record<string, unknown>).meta).toHaveProperty(
-        'requestId',
-      );
-      const meta = (result as Record<string, unknown>).meta as Record<
-        string,
-        unknown
-      >;
-      expect(meta.requestId).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-      );
+      expect(result).toBe(responseData);
+      expect(result).not.toHaveProperty('meta');
       done();
     });
   });
