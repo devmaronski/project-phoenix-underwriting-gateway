@@ -7,6 +7,8 @@ import { render, screen } from '@testing-library/react';
 import { LoanReviewScreen } from '@/components/LoanReviewScreen';
 import { useLoanReview } from '@/hooks/useLoanReview';
 import type { LoanReviewResponse } from '@/types/api.types';
+import type { UseQueryResult } from '@tanstack/react-query';
+import type { ApiError } from '@/api/client';
 
 vi.mock('@/hooks/useLoanReview', () => ({
   useLoanReview: vi.fn()
@@ -34,15 +36,16 @@ const mockData: LoanReviewResponse = {
 };
 
 const createState = (
-  overrides: Partial<ReturnType<typeof useLoanReview>> = {}
-) => ({
-  data: undefined,
-  error: null,
-  isLoading: false,
-  isError: false,
-  refetch: vi.fn(),
-  ...overrides
-});
+  overrides: Partial<UseQueryResult<LoanReviewResponse, ApiError>> = {}
+) =>
+  ({
+    data: undefined,
+    error: null,
+    isLoading: false,
+    isError: false,
+    refetch: vi.fn(),
+    ...overrides
+  }) as UseQueryResult<LoanReviewResponse, ApiError>;
 
 describe('LoanReviewScreen', () => {
   beforeEach(() => {
@@ -54,7 +57,9 @@ describe('LoanReviewScreen', () => {
 
     render(<LoanReviewScreen loanId={null} />);
 
-    expect(screen.getByText(/Enter a loan ID to view details/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Enter a loan ID to view details/i)
+    ).toBeInTheDocument();
   });
 
   it('should render loading state', () => {

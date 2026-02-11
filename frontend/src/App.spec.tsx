@@ -5,7 +5,9 @@ describe('App', () => {
   it('renders the loan review screen', async () => {
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText(/Project Phoenix - Loan Review/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Project Phoenix - Loan Review/)
+      ).toBeInTheDocument();
     });
   });
 });

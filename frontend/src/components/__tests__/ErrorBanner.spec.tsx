@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { createMockApiError } from '@/mocks/loan-review.mock';
 
@@ -16,7 +16,9 @@ describe('ErrorBanner', () => {
     render(<ErrorBanner error={error} onRetry={mockRetry} />);
 
     expect(screen.getByText('Loan Not Found')).toBeInTheDocument();
-    expect(screen.getByText(/The requested loan could not be found/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The requested loan could not be found/)
+    ).toBeInTheDocument();
   });
 
   it('should show request ID', () => {
