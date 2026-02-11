@@ -4,8 +4,9 @@ import { apiClient } from '../client';
 describe('API Client (Axios)', () => {
   describe('Configuration', () => {
     it('should have correct base URL from environment', () => {
+      const expectedBaseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
       const baseURL = apiClient.defaults.baseURL;
-      expect(baseURL).toBe('http://localhost:3000/api');
+      expect(baseURL).toBe(expectedBaseURL);
     });
 
     it('should have 30s timeout', () => {

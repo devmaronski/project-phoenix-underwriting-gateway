@@ -70,7 +70,7 @@ describe('Loans API Service', () => {
     it('should URL-encode loan ID', async () => {
       let capturedUrl = '';
       server.use(
-        http.get('http://localhost:3000/api/loans/:loanId', ({ request }) => {
+        http.get('*/loans/:loanId', ({ request }) => {
           capturedUrl = request.url;
           return HttpResponse.json({
             loan: {
