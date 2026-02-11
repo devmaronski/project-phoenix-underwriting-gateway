@@ -5,7 +5,7 @@ import {
   HttpException,
   Logger,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { AppError } from '../errors/app-error';
 
 const DEFAULT_ERROR = {
@@ -40,7 +40,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request & { requestId?: string }>();
+    const request = ctx.getRequest<Request>();
     const requestId = request.requestId ?? 'unknown';
 
     let errorState: ErrorState = { ...DEFAULT_ERROR };

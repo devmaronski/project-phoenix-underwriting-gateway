@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { map } from 'rxjs/operators';
@@ -20,11 +21,9 @@ export class RequestIdInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<ResponseData> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
     const requestId = uuidv4();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     request.requestId = requestId;
 
     return next.handle().pipe(
